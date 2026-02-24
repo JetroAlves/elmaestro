@@ -410,7 +410,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                   <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Preview</th>
                   <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Título / Nome</th>
                   {activeTab === 'products' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Origem / Marca</th>}
-                  {activeTab === 'recipes' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Tempo / Dificuldade</th>}
+                  {activeTab === 'recipes' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Ocasião / Tempo</th>}
 
                   {activeTab === 'banners' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Posição / Área</th>}
                   {activeTab === 'promotions' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Label / Título</th>}
@@ -441,7 +441,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                       <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">ID: #{item.id}</p>
                     </td>
                     {activeTab === 'products' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.country} • {item.brand}</p></td>}
-                    {activeTab === 'recipes' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.time} • {item.difficulty}</p></td>}
+                    {activeTab === 'recipes' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.ocasion} • {item.time}</p></td>}
 
                     {activeTab === 'banners' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{(BANNER_POSITIONS.find(p => p.id === item.position)?.label) || 'Geral'}</p></td>}
                     {activeTab === 'promotions' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.label} • {item.title}</p></td>}
@@ -521,7 +521,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Ocasião (Categoria)</label>
-                      <select value={formData.category || ''} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none" required>
+                      <select value={formData.ocasion || ''} onChange={(e) => setFormData({ ...formData, ocasion: e.target.value })} className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none" required>
                         <option value="">Selecione...</option>
                         {["Almoço", "Jantar", "Petiscos", "Sobremesas", "Café da Manhã"].map(c => <option key={c} value={c}>{c}</option>)}
                       </select>

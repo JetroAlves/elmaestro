@@ -26,7 +26,7 @@ const RecipesPage: React.FC<RecipesPageProps> = ({ onSelectRecipe }) => {
 
   const filteredRecipes = useMemo(() => {
     return recipes.filter(recipe => {
-      const matchesCategory = activeCategory === "Todas" || recipe.category === activeCategory;
+      const matchesCategory = activeCategory === "Todas" || recipe.ocasion === activeCategory;
       const matchesSearch = recipe.title ? recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) : recipe.name.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesCategory && matchesSearch;
     });

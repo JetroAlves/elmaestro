@@ -67,7 +67,7 @@ const RecipeDetailsPage: React.FC<RecipeDetailsPageProps> = ({ recipe, onBack, o
           {/* Lado Direito: Modo de Preparo e Queijo */}
           <div className="w-full lg:w-[55%] flex flex-col">
             <span className="text-[#90784E] font-black text-xs uppercase tracking-[0.4em] mb-4 text-center lg:text-left">
-              {recipe.category || 'Ocasião'}
+              {recipe.ocasion || 'Ocasião'}
             </span>
             <h1 className="text-5xl md:text-8xl font-black text-[#101010] uppercase tracking-tighter leading-[0.85] mb-12 text-center lg:text-left">
               {recipe.title || recipe.name}
