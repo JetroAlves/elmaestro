@@ -64,15 +64,20 @@ const ProductShowcaseSection: React.FC<ProductShowcaseSectionProps> = ({ onNavig
                 const product = featuredProducts[idx];
                 const imgSrc = product ? product.image : defaultImages[idx];
                 const rotationClasses = idx === 0 ? "-rotate-6" : idx === 1 ? "rotate-3 z-10" : "-rotate-3";
-                const widthClasses = idx === 1 ? "w-48 md:w-64 lg:w-72" : "w-40 md:w-52 lg:w-60";
+
+                // Dimensões padronizadas para evitar que um fique muito maior que o outro
+                const containerClasses = idx === 1
+                  ? "w-48 md:w-64 lg:w-72 h-[250px] md:h-[350px]"
+                  : "w-40 md:w-52 lg:w-60 h-[200px] md:h-[300px]";
+
                 const shadowClasses = idx === 1 ? "drop-shadow-[0_35px_35px_rgba(0,0,0,0.15)]" : "drop-shadow-2xl";
 
                 return (
-                  <div key={idx} className={`${widthClasses} transform ${rotationClasses} hover:rotate-0 transition-transform duration-500 flex-shrink-0`}>
+                  <div key={idx} className={`${containerClasses} transform ${rotationClasses} hover:rotate-0 transition-all duration-500 flex-shrink-0 flex items-center justify-center`}>
                     <img
                       src={imgSrc}
                       alt={product?.name || "Queijo Premium"}
-                      className={`w-full h-auto ${shadowClasses}`}
+                      className={`max-w-full max-h-full object-contain ${shadowClasses}`}
                     />
                   </div>
                 );
