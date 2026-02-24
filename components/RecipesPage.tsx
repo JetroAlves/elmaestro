@@ -84,26 +84,28 @@ const RecipesPage: React.FC<RecipesPageProps> = ({ onSelectRecipe }) => {
                 className="group cursor-pointer flex flex-col"
                 onClick={() => onSelectRecipe(recipe)}
               >
-                <div className="relative aspect-[4/5] overflow-hidden rounded-[3rem] mb-8 shadow-2xl">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-[3rem] mb-8 shadow-2xl bg-white">
                   <img
                     src={recipe.image}
-                    alt={recipe.title}
-                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    alt={recipe.title || recipe.name}
+                    className="w-full h-full object-contain transition-transform duration-1000 group-hover:scale-110"
                   />
 
-                  {/* Time Badge */}
-                  <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg">
-                    <span className="text-[#101010] font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                      </svg>
-                      {recipe.time}
-                    </span>
+                  {/* Badges Flutuantes (Estilo Imagem Referência) */}
+                  <div className="absolute bottom-6 left-6 right-6 flex gap-3">
+                    <div className="bg-white/90 backdrop-blur-md flex-1 py-3 rounded-2xl text-center shadow-lg">
+                      <p className="text-[8px] font-black text-[#90784E] uppercase tracking-widest mb-0.5">Tempo</p>
+                      <p className="text-sm font-black text-[#101010]">{recipe.time || '15 min'}</p>
+                    </div>
+                    <div className="bg-white/90 backdrop-blur-md flex-1 py-3 rounded-2xl text-center shadow-lg">
+                      <p className="text-[8px] font-black text-[#90784E] uppercase tracking-widest mb-0.5">Dificuldade</p>
+                      <p className="text-sm font-black text-[#101010]">{recipe.difficulty || 'Fácil'}</p>
+                    </div>
                   </div>
 
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center p-8">
-                    <button className="bg-white text-[#101010] px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                    <button className="bg-white text-[#101010] px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-transform shadow-xl">
                       Ver Receita
                     </button>
                   </div>
@@ -112,14 +114,14 @@ const RecipesPage: React.FC<RecipesPageProps> = ({ onSelectRecipe }) => {
                 <div className="space-y-3 px-2">
                   <div className="flex items-center justify-between">
                     <span className="text-[#90784E] font-black text-[10px] tracking-[0.2em] uppercase">
-                      {recipe.category} • {recipe.difficulty || recipe.complexity}
+                      {recipe.category || 'Ocasião'} • {recipe.difficulty || 'Gourmet'}
                     </span>
                   </div>
                   <h3 className="text-[#101010] text-2xl font-[900] leading-tight group-hover:text-[#90784E] transition-colors uppercase tracking-tighter">
                     {recipe.title || recipe.name}
                   </h3>
                   <p className="text-gray-600 font-medium leading-relaxed line-clamp-2">
-                    {recipe.description}
+                    {recipe.description || 'Uma receita deliciosa preparada com os melhores queijos El Maestro.'}
                   </p>
                 </div>
               </div>
