@@ -120,7 +120,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ onSelectProduct }) => {
                     onClick={() => onSelectProduct(product)}
                     className="bg-white rounded-[3rem] p-10 shadow-lg group-hover:shadow-2xl transition-all duration-500 relative flex items-center justify-center aspect-square mb-6 overflow-hidden cursor-pointer"
                   >
-                    <img src={product.image} alt={product.name} className="w-full h-auto object-contain transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-700 drop-shadow-[0_20px_25px_rgba(0,0,0,0.15)]" />
+                    <img src={product.image} alt={product.name} className="w-full h-full object-contain transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-700 drop-shadow-[0_20px_25px_rgba(0,0,0,0.15)]" />
                     <div className="absolute top-6 right-6 bg-[#FCFAE6] px-3 py-1 rounded-full border border-[#90784E]/20">
                       <span className="text-[10px] font-black uppercase text-[#90784E] tracking-tighter">{product.intensity}</span>
                     </div>
