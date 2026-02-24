@@ -33,12 +33,6 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ product, onBack
             alt={product.name}
             className="w-full max-w-[500px] h-auto object-contain drop-shadow-[0_50px_60px_rgba(0,0,0,0.25)] relative z-10 animate-float"
           />
-
-          {/* Selo de Intensidade */}
-          <div className="absolute -top-4 right-10 z-20 w-24 h-24 bg-[#101010] rounded-full flex flex-col items-center justify-center border-4 border-[#FCFAE6] shadow-2xl">
-            <span className="text-[#90784E] text-[10px] font-black uppercase tracking-tighter">Sabor</span>
-            <span className="text-white text-sm font-[900] uppercase tracking-tighter">{product.intensity || 'Suave'}</span>
-          </div>
         </div>
 
         {/* Lado Direito: Informações e Storytelling */}
