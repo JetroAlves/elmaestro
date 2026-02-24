@@ -14,6 +14,7 @@ const ProductShowcaseSection: React.FC<ProductShowcaseSectionProps> = ({ onNavig
       const { data, error } = await supabase
         .from('home_showcase')
         .select('*, products(*)')
+        .eq('section_type', 'showcase')
         .order('position', { ascending: true });
 
       if (data && !error) {

@@ -71,7 +71,7 @@ const App: React.FC = () => {
             <StoryGrid />
             <FeaturedImageSection />
             <ProductShowcaseSection onNavigateToProducts={() => setCurrentView('products')} />
-            <StoreLocatorSection />
+            <StoreLocatorSection onNavigateToStores={() => setCurrentView('stores')} />
             <RecipeSection
               onNavigateToRecipes={() => setCurrentView('recipes')}
               onSelectRecipe={handleOpenRecipe}

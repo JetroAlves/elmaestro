@@ -87,29 +87,40 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
   const [mobileFile, setMobileFile] = useState<File | null>(null);
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [showcaseSelections, setShowcaseSelections] = useState<string[]>(['', '', '']);
+  const [locatorSelections, setLocatorSelections] = useState<string[]>(['', '', '', '', '', '']);
 
   useEffect(() => {
     if (activeTab === 'showcase' && showcase.length > 0) {
-      const selections = ['', '', ''];
+      const showS = ['', '', ''];
+      const locS = ['', '', '', '', '', ''];
+
       showcase.forEach(s => {
-        if (s.position >= 1 && s.position <= 3) {
-          selections[s.position - 1] = s.product_id;
+        if (s.section_type === 'locator') {
+          if (s.position >= 1 && s.position <= 6) locS[s.position - 1] = s.product_id;
+        } else {
+          // Default ou 'showcase'
+          if (s.position >= 1 && s.position <= 3) showS[s.position - 1] = s.product_id;
         }
       });
-      setShowcaseSelections(selections);
+
+      setShowcaseSelections(showS);
+      setLocatorSelections(locS);
     }
   }, [showcase, activeTab]);
 
-  const handleSaveShowcase = async () => {
+  const handleSaveShowcase = async (type: 'showcase' | 'locator') => {
     setLoading(true);
     try {
-      // Remover todos os destaques atuais
-      await supabase.from('home_showcase').delete().neq('id', '00000000-0000-0000-0000-000000000000' as any);
+      // Remover apenas os destaques do tipo selecionado
+      await supabase.from('home_showcase').delete().eq('section_type', type);
 
-      const toInsert = showcaseSelections
+      const selections = type === 'showcase' ? showcaseSelections : locatorSelections;
+
+      const toInsert = selections
         .map((prodId, idx) => ({
           product_id: prodId,
-          position: idx + 1
+          position: idx + 1,
+          section_type: type
         }))
         .filter(s => s.product_id !== '');
 
@@ -118,7 +129,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
         if (error) throw error;
       }
 
-      alert("Destaques da Home atualizados com sucesso!");
+      alert(`Destaques (${type === 'showcase' ? 'Vitrine' : 'Lojas'}) atualizados!`);
       fetchAllData();
     } catch (err: any) {
       alert("Erro ao salvar destaques: " + err.message);
@@ -461,56 +472,108 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
             <div className="bg-white p-10 rounded-[2.5rem] shadow-xl border-t-8 border-stone-200"><p className="text-stone-400 font-black text-[10px] uppercase tracking-widest mb-2">Banners</p><p className="text-6xl font-[900] text-[#101010]">{banners.length + promotions.length + stories.length}</p></div>
           </div>
         ) : activeTab === 'showcase' ? (
-          <div className="bg-white rounded-[3rem] shadow-xl p-12 border border-stone-100 max-w-4xl">
-            <div className="mb-10">
-              <h3 className="text-2xl font-black text-[#101010] uppercase tracking-tighter mb-2">Produtos em Destaque (Seção Home)</h3>
-              <p className="text-stone-500 font-bold text-sm">Selecione exatamente 3 produtos para aparecerem na seção "NOSSOS PRODUTOS" da página principal.</p>
-            </div>
+          <div className="space-y-12 max-w-5xl">
+            {/* VITRINE PRINCIPAL */}
+            <div className="bg-white rounded-[3rem] shadow-xl p-12 border border-stone-100">
+              <div className="mb-10">
+                <h3 className="text-2xl font-black text-[#101010] uppercase tracking-tighter mb-2">Vitrine Principal (3 itens)</h3>
+                <p className="text-stone-500 font-bold text-sm">Seção "NOSSOS PRODUTOS" da página principal.</p>
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              {[0, 1, 2].map((i) => {
-                const selectedProd = products.find(p => p.id === showcaseSelections[i]);
-                return (
-                  <div key={i} className="space-y-4">
-                    <div className="bg-[#FCFAE6] aspect-square rounded-[2rem] border-2 border-dashed border-stone-200 flex flex-col items-center justify-center p-6 text-center overflow-hidden">
-                      {selectedProd ? (
-                        <>
-                          <img src={selectedProd.image} className="h-4/5 object-contain mb-2 drop-shadow-xl" />
-                          <p className="text-[10px] font-black uppercase text-[#101010] truncate w-full px-2">{selectedProd.name}</p>
-                        </>
-                      ) : (
-                        <div className="text-stone-300">
-                          <Icons.Products />
-                          <p className="text-[10px] font-black uppercase mt-2 tracking-widest text-[#101010]/20">Slot {i + 1} Vazio</p>
-                        </div>
-                      )}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                {[0, 1, 2].map((i) => {
+                  const selectedProd = products.find(p => p.id === showcaseSelections[i]);
+                  return (
+                    <div key={i} className="space-y-4">
+                      <div className="bg-[#FCFAE6] aspect-square rounded-[2rem] border-2 border-dashed border-stone-200 flex flex-col items-center justify-center p-6 text-center overflow-hidden">
+                        {selectedProd ? (
+                          <>
+                            <img src={selectedProd.image} className="h-4/5 object-contain mb-2 drop-shadow-xl" />
+                            <p className="text-[10px] font-black uppercase text-[#101010] truncate w-full px-2">{selectedProd.name}</p>
+                          </>
+                        ) : (
+                          <div className="text-stone-300">
+                            <Icons.Products />
+                            <p className="text-[10px] font-black uppercase mt-2 tracking-widest text-[#101010]/20">Slot {i + 1} Vazio</p>
+                          </div>
+                        )}
+                      </div>
+                      <select
+                        value={showcaseSelections[i]}
+                        onChange={(e) => {
+                          const newS = [...showcaseSelections];
+                          newS[i] = e.target.value;
+                          setShowcaseSelections(newS);
+                        }}
+                        className="w-full bg-white border-2 border-stone-100 rounded-xl py-3 px-4 text-[#101010] font-bold focus:border-[#90784E] outline-none text-xs"
+                      >
+                        <option value="">Selecionar Produto...</option>
+                        {products.map(p => (
+                          <option key={p.id} value={p.id}>{p.name} ({p.brand})</option>
+                        ))}
+                      </select>
                     </div>
-                    <select
-                      value={showcaseSelections[i]}
-                      onChange={(e) => {
-                        const newS = [...showcaseSelections];
-                        newS[i] = e.target.value;
-                        setShowcaseSelections(newS);
-                      }}
-                      className="w-full bg-white border-2 border-stone-100 rounded-xl py-3 px-4 text-[#101010] font-bold focus:border-[#90784E] outline-none text-xs"
-                    >
-                      <option value="">Selecionar Produto...</option>
-                      {products.map(p => (
-                        <option key={p.id} value={p.id}>{p.name} ({p.brand})</option>
-                      ))}
-                    </select>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => handleSaveShowcase('showcase')}
+                disabled={loading}
+                className="bg-[#101010] text-white px-12 py-4 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#90784E] transition-all shadow-xl disabled:opacity-50"
+              >
+                {loading ? 'SALVANDO...' : 'SALVAR VITRINE'}
+              </button>
             </div>
 
-            <button
-              onClick={handleSaveShowcase}
-              disabled={loading}
-              className="bg-[#101010] text-white px-12 py-4 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#90784E] transition-all shadow-xl disabled:opacity-50"
-            >
-              {loading ? 'SALVANDO...' : 'SALVAR DESTAQUES'}
-            </button>
+            {/* SEÇÃO ONDE ENCONTRAR */}
+            <div className="bg-white rounded-[3rem] shadow-xl p-12 border border-stone-100">
+              <div className="mb-10">
+                <h3 className="text-2xl font-black text-[#101010] uppercase tracking-tighter mb-2">Carrossel "Onde Encontrar" (até 6 itens)</h3>
+                <p className="text-stone-500 font-bold text-sm">Seção com o carrossel infinito próximo ao rodapé da Home.</p>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-10">
+                {[0, 1, 2, 3, 4, 5].map((i) => {
+                  const selectedProd = products.find(p => p.id === locatorSelections[i]);
+                  return (
+                    <div key={i} className="space-y-4">
+                      <div className="bg-[#FCFAE6] aspect-square rounded-[1.5rem] border-2 border-dashed border-stone-200 flex flex-col items-center justify-center p-4 text-center overflow-hidden">
+                        {selectedProd ? (
+                          <img src={selectedProd.image} className="h-full object-contain drop-shadow-lg" />
+                        ) : (
+                          <div className="text-stone-300">
+                            <Icons.Products />
+                          </div>
+                        )}
+                      </div>
+                      <select
+                        value={locatorSelections[i]}
+                        onChange={(e) => {
+                          const newS = [...locatorSelections];
+                          newS[i] = e.target.value;
+                          setLocatorSelections(newS);
+                        }}
+                        className="w-full bg-white border border-stone-100 rounded-lg py-2 px-2 text-[#101010] font-bold focus:border-[#90784E] outline-none text-[8px] uppercase tracking-tighter"
+                      >
+                        <option value="">Slot {i + 1}</option>
+                        {products.map(p => (
+                          <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => handleSaveShowcase('locator')}
+                disabled={loading}
+                className="bg-[#101010] text-white px-12 py-4 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#90784E] transition-all shadow-xl disabled:opacity-50"
+              >
+                {loading ? 'SALVANDO...' : 'SALVAR CARROSSEL'}
+              </button>
+            </div>
           </div>
         ) : (
           <div className="bg-white rounded-[3rem] shadow-xl overflow-hidden border border-stone-100">
