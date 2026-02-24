@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../services/supabase';
 
-type AdminTab = 'dashboard' | 'products' | 'recipes' | 'stores' | 'banners' | 'promotions' | 'stories' | 'categories';
+type AdminTab = 'dashboard' | 'products' | 'recipes' | 'banners' | 'promotions' | 'stories' | 'categories';
 
 interface AdminPageProps {
   onExit: () => void;
@@ -46,7 +46,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
   const [products, setProducts] = useState<any[]>([]);
   const [recipes, setRecipes] = useState<any[]>([]);
   const [banners, setBanners] = useState<any[]>([]);
-  const [stores, setStores] = useState<any[]>([]);
+
   const [promotions, setPromotions] = useState<any[]>([]);
   const [stories, setStories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,11 +59,10 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
 
   const fetchAllData = async () => {
     setLoading(true);
-    const [p, r, b, s, pr, st] = await Promise.all([
+    const [p, r, b, pr, st] = await Promise.all([
       supabase.from('products').select('*').order('created_at', { ascending: false }),
       supabase.from('recipes').select('*').order('created_at', { ascending: false }),
       supabase.from('banners').select('*').order('created_at', { ascending: false }),
-      supabase.from('stores').select('*').order('created_at', { ascending: false }),
       supabase.from('promotion_carousel').select('*').order('sorting_order', { ascending: true }),
       supabase.from('story_grid').select('*').order('sorting_order', { ascending: true })
     ]);
@@ -71,7 +70,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     if (p.data) setProducts(p.data);
     if (r.data) setRecipes(r.data);
     if (b.data) setBanners(b.data);
-    if (s.data) setStores(s.data);
     if (pr.data) setPromotions(pr.data);
     if (st.data) setStories(st.data);
     setLoading(false);
@@ -193,7 +191,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
           processedData.link = '/produtos';
         }
       }
-      else if (activeTab === 'stores') tableName = 'stores';
+
       else if (activeTab === 'promotions') {
         tableName = 'promotion_carousel';
         // Para promoções, a imagem vem do produto se não houver upload fresco (que removemos do UI mas mantemos no logica por segurança)
@@ -246,7 +244,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     if (activeTab === 'products') tableName = 'products';
     if (activeTab === 'recipes') tableName = 'recipes';
     if (activeTab === 'banners') tableName = 'banners';
-    if (activeTab === 'stores') tableName = 'stores';
+
     if (activeTab === 'promotions') tableName = 'promotion_carousel';
     if (activeTab === 'stories') tableName = 'story_grid';
 
@@ -299,7 +297,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     { id: 'dashboard', label: 'Dashboard', icon: Icons.Dashboard },
     { id: 'products', label: 'Produtos', icon: Icons.Products },
     { id: 'recipes', label: 'Receitas', icon: Icons.Recipes },
-    { id: 'stores', label: 'Onde Comprar', icon: Icons.Stores },
+
     { id: 'banners', label: 'Banners Gerais', icon: Icons.Banners },
     { id: 'promotions', label: 'Carrossel Promo', icon: Icons.Banners },
     { id: 'stories', label: 'StoryGrid', icon: Icons.Dashboard },
@@ -310,9 +308,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     activeTab === 'products' ? products :
       activeTab === 'recipes' ? recipes :
         activeTab === 'banners' ? banners :
-          activeTab === 'stores' ? stores :
-            activeTab === 'promotions' ? promotions :
-              stories;
+          activeTab === 'promotions' ? promotions :
+            stories;
 
   return (
     <div className="min-h-screen bg-[#FCFAE6] flex">
@@ -348,7 +345,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
               {activeTab === 'dashboard' && "Visão Geral"}
               {activeTab === 'products' && "Gestão de Produtos"}
               {activeTab === 'recipes' && "Gestão de Receitas"}
-              {activeTab === 'stores' && "Pontos de Venda"}
+
               {activeTab === 'banners' && "Banners Gerais"}
               {activeTab === 'promotions' && "Carrossel de Promoções"}
               {activeTab === 'stories' && "StoryGrid (Informativos)"}
@@ -361,7 +358,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
               className="bg-[#101010] text-white px-8 py-4 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#90784E] transition-all flex items-center gap-3 shadow-xl"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-              Novo {activeTab === 'products' ? 'Produto' : activeTab === 'recipes' ? 'Receita' : activeTab === 'stores' ? 'Ponto' : 'Banner'}
+              Novo {activeTab === 'products' ? 'Produto' : activeTab === 'recipes' ? 'Receita' : 'Banner'}
             </button>
           )}
         </header>
@@ -381,7 +378,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                   <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Título / Nome</th>
                   {activeTab === 'products' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Origem / Marca</th>}
                   {activeTab === 'recipes' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Tempo / Dificuldade</th>}
-                  {activeTab === 'stores' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Endereço / Cidade</th>}
+
                   {activeTab === 'banners' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Posição / Área</th>}
                   {activeTab === 'promotions' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Label / Título</th>}
                   {activeTab === 'stories' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Título / Especial</th>}
@@ -412,7 +409,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                     </td>
                     {activeTab === 'products' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.country} • {item.brand}</p></td>}
                     {activeTab === 'recipes' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.time} • {item.difficulty}</p></td>}
-                    {activeTab === 'stores' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.address} • {item.city}</p></td>}
+
                     {activeTab === 'banners' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{(BANNER_POSITIONS.find(p => p.id === item.position)?.label) || 'Geral'}</p></td>}
                     {activeTab === 'promotions' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.label} • {item.title}</p></td>}
                     {activeTab === 'stories' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.title} • {item.is_special ? 'SIM' : 'NÃO'}</p></td>}
@@ -439,9 +436,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
               {editingItem ? 'Editar' : 'Novo'} {
                 activeTab === 'products' ? 'Produto' :
                   activeTab === 'recipes' ? 'Receita' :
-                    activeTab === 'stores' ? 'Ponto de Venda' :
-                      activeTab === 'banners' ? 'Banner' :
-                        activeTab === 'promotions' ? 'Promoção' : 'Story'
+                    activeTab === 'banners' ? 'Banner' :
+                      activeTab === 'promotions' ? 'Promoção' : 'Story'
               }
             </h2>
 
@@ -588,19 +584,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                 </div>
               )}
 
-              {/* FORM LOJAS */}
-              {activeTab === 'stores' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                  <div className="space-y-2 md:col-span-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Nome da Loja</label>
-                    <input type="text" value={formData.name || ''} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Ex: Empório Santa Maria" className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all" required />
-                  </div>
-                  <div className="space-y-2 md:col-span-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Endereço</label>
-                    <input type="text" value={formData.address || ''} onChange={(e) => setFormData({ ...formData, address: e.target.value })} placeholder="Rua, Número, Bairro" className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none" required />
-                  </div>
-                </div>
-              )}
+
 
               {/* UPLOAD SECTION (CONTEXTUAL) */}
               <div className="space-y-6">
