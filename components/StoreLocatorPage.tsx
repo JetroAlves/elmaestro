@@ -96,8 +96,8 @@ const StoreLocatorPage: React.FC = () => {
             <div className="flex-grow relative">
               <input
                 type="text"
-                placeholder="Digite seu CEP, cidade ou nome da loja"
-                className="w-full bg-white rounded-full py-5 px-10 text-[#101010] font-bold text-lg focus:ring-4 focus:ring-[#90784E]/30 outline-none transition-all"
+                placeholder="Buscar por CEP, cidade ou loja..."
+                className="w-full bg-white rounded-full py-4 md:py-5 px-6 md:px-12 text-[#101010] font-bold text-base md:text-lg focus:ring-4 focus:ring-[#90784E]/30 outline-none transition-all"
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -111,7 +111,7 @@ const StoreLocatorPage: React.FC = () => {
             </div>
             <button
               onClick={handleSearch}
-              className="bg-[#90784E] text-white px-10 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:brightness-110 transition-all shadow-xl"
+              className="bg-[#90784E] text-white px-10 py-4 md:py-5 rounded-full font-black text-sm uppercase tracking-widest hover:brightness-110 transition-all shadow-xl"
             >
               BUSCAR PONTOS
             </button>
