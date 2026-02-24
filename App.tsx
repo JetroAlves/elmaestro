@@ -115,7 +115,12 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {currentView !== 'admin' && <Footer onNavigateAdmin={() => setCurrentView('admin')} />}
+      {currentView !== 'admin' && (
+        <Footer
+          onNavigateAdmin={() => setCurrentView('admin')}
+          onNavigate={(view) => setCurrentView(view)}
+        />
+      )}
     </div>
   );
 };
