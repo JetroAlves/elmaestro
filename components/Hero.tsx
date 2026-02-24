@@ -11,20 +11,28 @@ const SLIDE_INTERVAL = 5000; // 5 seconds
 const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores }) => {
   const [banners, setBanners] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Fetch ALL active hero banners
   useEffect(() => {
     const fetchHeroBanners = async () => {
-      const { data, error } = await supabase
-        .from('banners')
-        .select('*')
-        .eq('position', 'hero')
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('banners')
+          .select('*')
+          .eq('position', 'hero')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false });
 
-      if (data && !error && data.length > 0) {
-        setBanners(data);
+        if (data && !error && data.length > 0) {
+          setBanners(data);
+        }
+      } catch (err) {
+        console.error("Error fetching banners:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchHeroBanners();
@@ -104,12 +112,14 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores })
               )}
             </div>
           ))
-        ) : (
+        ) : !loading ? (
           <img
             src={fallbackUrl}
             alt="Queijo premium"
             className="absolute inset-0 w-full h-full object-cover"
           />
+        ) : (
+          <div className="absolute inset-0 bg-[#101010] animate-pulse"></div>
         )}
 
         {/* Dark overlay */}
@@ -135,8 +145,8 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores })
                 key={index}
                 onClick={() => goToSlide(index)}
                 className={`rounded-full transition-all duration-300 ${index === currentIndex
-                    ? 'w-8 h-3 bg-white'
-                    : 'w-3 h-3 bg-white/40 hover:bg-white/70'
+                  ? 'w-8 h-3 bg-white'
+                  : 'w-3 h-3 bg-white/40 hover:bg-white/70'
                   }`}
                 aria-label={`Banner ${index + 1}`}
               />
