@@ -217,7 +217,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
         processedData.main_product_id = formData.main_product_id || null;
 
         // Remover campos que não existem na tabela recipes (evitar erro PostgREST)
-        delete processedData.ocasion;
+        // delete processedData.ocasion; // Re-ativado para salvar no banco
         delete processedData.ocasião;
         delete processedData.category;
         delete processedData.mainProductId; // Case antigo do frontend
