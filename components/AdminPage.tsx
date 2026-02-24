@@ -221,6 +221,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
         delete processedData.ocasião;
         delete processedData.category;
         delete processedData.mainProductId; // Case antigo do frontend
+        delete processedData.main_product;  // Objeto do join no Admin
+        delete processedData.mainCheese;    // Objeto do join no display
       }
       else if (activeTab === 'banners') {
         tableName = 'banners';
