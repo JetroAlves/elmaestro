@@ -17,6 +17,7 @@ import StoreLocatorPage from './components/StoreLocatorPage';
 import AdminPage from './components/AdminPage';
 import PrivacyPage from './components/PrivacyPage';
 import TermsPage from './components/TermsPage';
+import AdminLoginPage from './components/AdminLoginPage';
 
 import { supabase } from './services/supabase';
 import { Session } from '@supabase/supabase-js';
