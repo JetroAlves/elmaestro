@@ -15,7 +15,7 @@ const RecipesPage: React.FC<RecipesPageProps> = ({ onSelectRecipe }) => {
 
   useEffect(() => {
     const fetchRecipes = async () => {
-      const { data, error } = await supabase.from('recipes').select('*');
+      const { data, error } = await supabase.from('recipes').select('*, mainCheese:products(*)');
       if (data && !error) {
         setRecipes(data);
       }

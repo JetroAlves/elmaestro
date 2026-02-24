@@ -61,7 +61,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     setLoading(true);
     const [p, r, b, pr, st] = await Promise.all([
       supabase.from('products').select('*').order('created_at', { ascending: false }),
-      supabase.from('recipes').select('*').order('created_at', { ascending: false }),
+      supabase.from('recipes').select('*, main_product:products(*)').order('created_at', { ascending: false }),
       supabase.from('banners').select('*').order('created_at', { ascending: false }),
       supabase.from('promotion_carousel').select('*').order('sorting_order', { ascending: true }),
       supabase.from('story_grid').select('*').order('sorting_order', { ascending: true })
@@ -87,10 +87,11 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     setEditingItem(item);
     const initialFormData = { ...item };
 
-    // Converter arrays para o estado de exibição se necessário
+    // Converter nomes de colunas do banco (snake_case) para o estado do form (camelCase)
     if (activeTab === 'recipes') {
       initialFormData.ingredients = item.ingredients || [''];
       initialFormData.instructions = item.instructions || [''];
+      initialFormData.main_product_id = item.main_product_id || '';
     }
 
     setFormData(initialFormData);
@@ -211,6 +212,15 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
         tableName = 'recipes';
         processedData.ingredients = formData.ingredients ? formData.ingredients.filter((l: string) => l.trim() !== '') : [];
         processedData.instructions = formData.instructions ? formData.instructions.filter((l: string) => l.trim() !== '') : [];
+
+        // Mapear para o nome exato da coluna no banco
+        processedData.main_product_id = formData.main_product_id || null;
+
+        // Remover campos que não existem na tabela recipes (evitar erro PostgREST)
+        delete processedData.ocasion;
+        delete processedData.ocasião;
+        delete processedData.category;
+        delete processedData.mainProductId; // Case antigo do frontend
       }
       else if (activeTab === 'banners') {
         tableName = 'banners';
@@ -528,7 +538,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Ingrediente Principal (El Maestro)</label>
-                      <select value={formData.mainProductId || ''} onChange={(e) => setFormData({ ...formData, mainProductId: e.target.value })} className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none" required>
+                      <select value={formData.main_product_id || ''} onChange={(e) => setFormData({ ...formData, main_product_id: e.target.value })} className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none" required>
                         <option value="">Selecione um produto...</option>
                         {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                       </select>
