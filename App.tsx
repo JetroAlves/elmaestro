@@ -72,7 +72,10 @@ const App: React.FC = () => {
             <FeaturedImageSection />
             <ProductShowcaseSection />
             <StoreLocatorSection />
-            <RecipeSection onNavigateToRecipes={() => setCurrentView('recipes')} />
+            <RecipeSection
+              onNavigateToRecipes={() => setCurrentView('recipes')}
+              onSelectRecipe={handleOpenRecipe}
+            />
           </>
         )}
 
