@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../services/supabase';
 
-type AdminTab = 'dashboard' | 'products' | 'recipes' | 'banners' | 'promotions' | 'stories' | 'categories';
+type AdminTab = 'dashboard' | 'products' | 'recipes' | 'banners' | 'promotions' | 'stories';
 
 interface AdminPageProps {
   onExit: () => void;
@@ -369,7 +369,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     { id: 'promotions', label: 'Carrossel Promo', icon: Icons.Banners },
     { id: 'stories', label: 'StoryGrid', icon: Icons.Dashboard },
     { id: 'showcase', label: 'Destaques Home', icon: Icons.Showcase },
-    { id: 'categories', label: 'Configurações', icon: Icons.Categories },
   ];
 
   const currentList =
@@ -423,10 +422,9 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
               {activeTab === 'promotions' && "Carrossel de Promoções"}
               {activeTab === 'stories' && "StoryGrid (Informativos)"}
               {activeTab === 'showcase' && "Destaques da Home"}
-              {activeTab === 'categories' && "Configurações"}
             </h1>
           </div>
-          {activeTab !== 'dashboard' && activeTab !== 'categories' && activeTab !== 'showcase' && (
+          {activeTab !== 'dashboard' && activeTab !== 'showcase' && (
             <button
               onClick={() => setIsModalOpen(true)}
               className="bg-[#101010] text-white px-8 py-4 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#90784E] transition-all flex items-center gap-3 shadow-xl"
