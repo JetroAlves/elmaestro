@@ -18,14 +18,28 @@ import AdminPage from './components/AdminPage';
 import PrivacyPage from './components/PrivacyPage';
 import TermsPage from './components/TermsPage';
 
+import { supabase } from './services/supabase';
+import { Session } from '@supabase/supabase-js';
+
 const App: React.FC = () => {
-  console.log("App mounting...");
-  useEffect(() => {
-    console.log("App mounted");
-  }, []);
   const [currentView, setCurrentView] = useState<'home' | 'products' | 'product-details' | 'recipes' | 'recipe-details' | 'about' | 'stores' | 'admin' | 'privacy' | 'terms'>('home');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    // Pegar sessão inicial
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      setSession(initialSession);
+    });
+
+    // Ouvir mudanças na autenticação
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleOpenProduct = (product: any) => {
     setSelectedProduct(product);
@@ -121,7 +135,11 @@ const App: React.FC = () => {
         )}
 
         {currentView === 'admin' && (
-          <AdminPage onExit={() => setCurrentView('home')} />
+          session ? (
+            <AdminPage onExit={() => setCurrentView('home')} />
+          ) : (
+            <AdminLoginPage onLoginSuccess={() => setCurrentView('admin')} />
+          )
         )}
       </main>
 

@@ -37,9 +37,6 @@ const Icons = {
 }
 
 const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -54,10 +51,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchAllData();
-    }
-  }, [isLoggedIn]);
+    fetchAllData();
+  }, []);
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -155,14 +150,10 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     setIsModalOpen(true);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password.toLowerCase() === "admin") {
-      setIsLoggedIn(true);
-      setError(false);
-    } else {
-      setError(true);
-      setTimeout(() => setError(false), 3000);
+  const handleLogout = async () => {
+    if (confirm("Deseja realmente sair?")) {
+      await supabase.auth.signOut();
+      onExit();
     }
   };
 
@@ -368,30 +359,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     setMobileFile(null);
   };
 
-  if (!isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-[#101010] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-[#FCFAE6] rounded-[3rem] p-10 md:p-12 shadow-2xl text-center relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-2 bg-[#90784E]"></div>
-          <img src="https://kyflpnhnxnivnuysrszr.supabase.co/storage/v1/object/public/images/204a94a1-f534-43b9-b67e-9a3a2c9b2baf/LogoElMaestro.png" alt="Logo" className="h-12 mx-auto mb-10 brightness-0 opacity-80" />
-          <h2 className="text-[#101010] text-3xl font-[900] uppercase tracking-tighter mb-2">Área Restrita</h2>
-          <p className="text-stone-500 text-xs font-bold uppercase tracking-widest mb-8">Acesso Administrativo</p>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              type="password"
-              placeholder="Senha de acesso"
-              className={`w-full bg-white border-2 rounded-full py-4 px-8 text-[#101010] font-bold outline-none transition-all text-center ${error ? 'border-red-500 animate-shake' : 'border-stone-200 focus:border-[#90784E]'}`}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button type="submit" className="w-full bg-[#101010] text-white py-4 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#90784E] transition-all">ENTRAR NO PAINEL</button>
-          </form>
-          <button onClick={onExit} className="mt-8 text-stone-400 text-[10px] font-black uppercase tracking-widest hover:text-[#101010]">Voltar ao Site</button>
-        </div>
-        <style>{`@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } } .animate-shake { animation: shake 0.2s ease-in-out 0s 2; }`}</style>
-      </div>
-    );
-  }
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Icons.Dashboard },
@@ -433,7 +400,12 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
           ))}
         </nav>
         <div className="p-6 border-t border-stone-800">
-          <button onClick={onExit} className="w-full bg-stone-900 text-stone-400 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:text-red-500 transition-all">Sair do Painel</button>
+          <button onClick={handleLogout} className="w-full bg-stone-900 text-stone-400 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:text-red-500 transition-all flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+            </svg>
+            Sair do Painel
+          </button>
         </div>
       </aside>
 
