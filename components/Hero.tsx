@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { supabase } from '../services/supabase';
 
 interface HeroProps {
@@ -6,29 +6,58 @@ interface HeroProps {
   onNavigateToStores?: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores }) => {
-  const [banner, setBanner] = useState<any>(null);
+const SLIDE_INTERVAL = 5000; // 5 seconds
 
+const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores }) => {
+  const [banners, setBanners] = useState<any[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Fetch ALL active hero banners
   useEffect(() => {
-    const fetchHero = async () => {
+    const fetchHeroBanners = async () => {
       const { data, error } = await supabase
         .from('banners')
         .select('*')
         .eq('position', 'hero')
         .eq('is_active', true)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+        .order('created_at', { ascending: false });
 
-      if (data && !error) {
-        setBanner(data);
+      if (data && !error && data.length > 0) {
+        setBanners(data);
       }
     };
-    fetchHero();
+    fetchHeroBanners();
   }, []);
 
+  // Auto-rotation timer
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (banners.length <= 1) return;
+
+    timerRef.current = setInterval(() => {
+      setCurrentIndex(prev => (prev + 1) % banners.length);
+    }, SLIDE_INTERVAL);
+  }, [banners.length]);
+
+  useEffect(() => {
+    startTimer();
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [startTimer]);
+
+  // Manual navigation — reset timer on click
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+    startTimer();
+  };
+
+  const currentBanner = banners[currentIndex] || null;
+
   const handleCTA = () => {
-    const link = banner?.link || '/produtos';
+    if (!currentBanner) return;
+    const link = currentBanner.link || '/produtos';
 
     if (link === '/produtos' && onNavigateToProducts) {
       onNavigateToProducts();
@@ -37,31 +66,81 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores })
     } else if (link.startsWith('http')) {
       window.open(link, '_blank');
     } else {
-      // Fallback para navegação interna se houver mais rotas no futuro
       onNavigateToProducts?.();
     }
   };
 
-  const bannerUrl = banner?.image_desktop || "https://gastronomiacarioca.zonasul.com.br/wp-content/uploads/2021/03/queijos_vinhos_rodrigo_azevedo_zona_sul.jpg";
+  const fallbackUrl = "https://gastronomiacarioca.zonasul.com.br/wp-content/uploads/2021/03/queijos_vinhos_rodrigo_azevedo_zona_sul.jpg";
 
   return (
     <section className="relative">
       <div className="relative h-[90vh] flex items-center justify-center overflow-hidden">
-        <img
-          src={bannerUrl}
-          alt="Queijo premium"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/30"></div>
 
-        {banner?.button_text && (
+        {/* Banner layers — all stacked, crossfade via opacity */}
+        {banners.length > 0 ? (
+          banners.map((banner, index) => (
+            <div
+              key={banner.id}
+              className="absolute inset-0 transition-all duration-1000 ease-in-out"
+              style={{
+                opacity: index === currentIndex ? 1 : 0,
+                transform: index === currentIndex ? 'scale(1)' : 'scale(1.05)',
+                zIndex: index === currentIndex ? 1 : 0,
+              }}
+            >
+              {/* Desktop image */}
+              <img
+                src={banner.image_desktop || fallbackUrl}
+                alt={banner.button_text || 'Banner'}
+                className={`absolute inset-0 w-full h-full object-cover ${banner.image_mobile ? 'hidden md:block' : ''}`}
+              />
+              {/* Mobile image (if available) */}
+              {banner.image_mobile && (
+                <img
+                  src={banner.image_mobile}
+                  alt={banner.button_text || 'Banner'}
+                  className="absolute inset-0 w-full h-full object-cover md:hidden"
+                />
+              )}
+            </div>
+          ))
+        ) : (
+          <img
+            src={fallbackUrl}
+            alt="Queijo premium"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
+
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/30 z-[2]"></div>
+
+        {/* CTA Button */}
+        {currentBanner?.button_text && (
           <div className="relative z-10">
             <button
               onClick={handleCTA}
               className="bg-white text-[#101010] px-12 py-5 rounded-full font-black text-sm uppercase tracking-[0.2em] hover:scale-105 transition-transform shadow-2xl"
             >
-              {banner.button_text}
+              {currentBanner.button_text}
             </button>
+          </div>
+        )}
+
+        {/* Dots — only if more than 1 banner */}
+        {banners.length > 1 && (
+          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex gap-3">
+            {banners.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`rounded-full transition-all duration-300 ${index === currentIndex
+                    ? 'w-8 h-3 bg-white'
+                    : 'w-3 h-3 bg-white/40 hover:bg-white/70'
+                  }`}
+                aria-label={`Banner ${index + 1}`}
+              />
+            ))}
           </div>
         )}
       </div>
