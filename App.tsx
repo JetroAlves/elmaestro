@@ -15,13 +15,15 @@ import RecipeDetailsPage from './components/RecipeDetailsPage';
 import AboutPage from './components/AboutPage';
 import StoreLocatorPage from './components/StoreLocatorPage';
 import AdminPage from './components/AdminPage';
+import PrivacyPage from './components/PrivacyPage';
+import TermsPage from './components/TermsPage';
 
 const App: React.FC = () => {
   console.log("App mounting...");
   useEffect(() => {
     console.log("App mounted");
   }, []);
-  const [currentView, setCurrentView] = useState<'home' | 'products' | 'product-details' | 'recipes' | 'recipe-details' | 'about' | 'stores' | 'admin'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'products' | 'product-details' | 'recipes' | 'recipe-details' | 'about' | 'stores' | 'admin' | 'privacy' | 'terms'>('home');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
 
@@ -48,8 +50,8 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FCFAE6]">
-      {currentView !== 'admin' && <Header onNavigate={(view) => setCurrentView(view)} />}
+    <div className="min-h-screen bg-stone-50 font-sans text-stone-900">
+      <Header onNavigate={(view) => setCurrentView(view)} />
 
       <main className="flex-grow">
         {currentView === 'home' && (
@@ -65,7 +67,7 @@ const App: React.FC = () => {
                 </h2>
               </div>
             </section>
-            <section className="bg-[#FCFAE6]">
+            <section className="py-12 bg-white">
               <PromotionCarousel onSelectProduct={handleOpenProduct} />
             </section>
             <StoryGrid />
@@ -108,6 +110,14 @@ const App: React.FC = () => {
 
         {currentView === 'stores' && (
           <StoreLocatorPage />
+        )}
+
+        {currentView === 'privacy' && (
+          <PrivacyPage />
+        )}
+
+        {currentView === 'terms' && (
+          <TermsPage />
         )}
 
         {currentView === 'admin' && (
