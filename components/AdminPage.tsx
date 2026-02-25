@@ -395,6 +395,11 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
         tableName = 'story_grid';
         processedData.bg_color = formData.bgColor;
         processedData.is_special = formData.isSpecial === 'true';
+        // summary e content já estão no processedData via spread do formData se os IDs baterem
+        // Mas garantimos mapeamento se necessário
+        processedData.text = formData.text; // Resumo curto para o card
+        processedData.summary = formData.summary; // Resumo opcional
+        processedData.content = formData.content; // Conteúdo completo (Blog)
       }
 
       if (tableName) {
@@ -988,33 +993,34 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                   </div>
                 </div>
               )}
-
               {/* FORM STORIES */}
               {activeTab === 'stories' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Título</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Título da História</label>
                     <input type="text" value={formData.title || ''} onChange={(e) => setFormData({ ...formData, title: e.target.value })} placeholder="Ex: O RITMO DE UM BOM CUIDADO..." className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all" required />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Descrição / Texto</label>
-                    <textarea value={formData.text || ''} onChange={(e) => setFormData({ ...formData, text: e.target.value })} rows={4} className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none"></textarea>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Resumo do Card (Texto Curto)</label>
+                    <textarea value={formData.text || ''} onChange={(e) => setFormData({ ...formData, text: e.target.value })} rows={2} placeholder="Uma frase curta que aparece no card..." className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all" required></textarea>
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Conteúdo Completo (Estilo Blog)</label>
+                    <textarea value={formData.content || ''} onChange={(e) => setFormData({ ...formData, content: e.target.value })} rows={8} placeholder="Escreva a história completa aqui..." className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all"></textarea>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Destaque Dourado?</label>
-                    <select value={formData.isSpecial?.toString() || 'false'} onChange={(e) => setFormData({ ...formData, isSpecial: e.target.value })} className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Destaque Especial?</label>
+                    <select value={formData.is_special?.toString() || 'false'} onChange={(e) => setFormData({ ...formData, is_special: e.target.value === 'true' })} className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none">
                       <option value="false">Não</option>
-                      <option value="true">Sim</option>
+                      <option value="true">Sim (Prêmio/Bônus)</option>
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Cor de Fundo (Se especial)</label>
-                    <input type="text" value={formData.bgColor || ''} onChange={(e) => setFormData({ ...formData, bgColor: e.target.value })} placeholder="Ex: bg-[#E9A15E]" className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Cor de Fundo (Ex: bg-amber-50)</label>
+                    <input type="text" value={formData.bg_color || ''} onChange={(e) => setFormData({ ...formData, bg_color: e.target.value })} placeholder="Ex: bg-white" className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all" />
                   </div>
                 </div>
               )}
-
-
 
               {/* UPLOAD SECTION (CONTEXTUAL) */}
               <div className="space-y-6">

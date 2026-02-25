@@ -26,7 +26,11 @@ const DEFAULT_STORIES = [
   }
 ];
 
-const StoryGrid: React.FC = () => {
+interface StoryGridProps {
+  onSelectStory: (story: any) => void;
+}
+
+const StoryGrid: React.FC<StoryGridProps> = ({ onSelectStory }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [stories, setStories] = useState<any[]>(DEFAULT_STORIES);
   const [loading, setLoading] = useState(true);
@@ -99,10 +103,11 @@ const StoryGrid: React.FC = () => {
         {stories.map((story) => (
           <div
             key={story.id}
-            className="flex-shrink-0 w-[80vw] sm:w-[300px] md:w-[340px] snap-start flex flex-col space-y-6"
+            className="flex-shrink-0 w-[80vw] sm:w-[300px] md:w-[340px] snap-start flex flex-col space-y-6 cursor-pointer group"
+            onClick={() => onSelectStory(story)}
           >
             {/* CARD */}
-            <div className={`relative rounded-[2.5rem] overflow-hidden shadow-xl ${story.bg_color || 'bg-white'} aspect-square`}>
+            <div className={`relative rounded-[2.5rem] overflow-hidden shadow-xl ${story.bg_color || 'bg-white'} aspect-square transition-transform duration-500 group-hover:-translate-y-2`}>
               {story.is_special ? (
                 <div className="w-full h-full flex flex-col items-center justify-center p-8 relative">
                   <div className="w-14 h-14 bg-[#101010] rounded-full flex items-center justify-center mb-6 shadow-lg">
@@ -120,19 +125,26 @@ const StoryGrid: React.FC = () => {
                 <img
                   src={story.image}
                   alt={story.title}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               )}
+              {/* Overlay Hover */}
+              <div className="absolute inset-0 bg-[#90784E]/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="bg-white text-[#101010] py-3 px-6 rounded-full font-black text-[10px] uppercase tracking-widest shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform">Ler Mais</span>
+              </div>
             </div>
 
             {/* TEXTO */}
             <div className="space-y-4 px-2">
-              <h3 className="text-[#101010] font-black text-xl md:text-2xl leading-tight uppercase tracking-tighter font-sans">
+              <h3 className="text-[#101010] font-black text-xl md:text-2xl leading-tight uppercase tracking-tighter font-sans group-hover:text-[#90784E] transition-colors">
                 {story.title}
               </h3>
-              <p className="text-[#101010] text-sm md:text-base leading-relaxed font-bold opacity-75">
+              <p className="text-[#101010] text-sm md:text-base leading-relaxed font-bold opacity-75 line-clamp-2">
                 {story.text}
               </p>
+              <div className="pt-2">
+                <span className="text-[#90784E] font-black text-[10px] uppercase tracking-widest border-b-2 border-[#90784E]/30 pb-1 group-hover:border-[#90784E] transition-all">Continuar lendo →</span>
+              </div>
             </div>
           </div>
         ))}

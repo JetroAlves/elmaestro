@@ -12,6 +12,7 @@ import ProductsPage from './components/ProductsPage';
 import ProductDetailsPage from './components/ProductDetailsPage';
 import RecipesPage from './components/RecipesPage';
 import RecipeDetailsPage from './components/RecipeDetailsPage';
+import StoryDetailsPage from './components/StoryDetailsPage';
 import AboutPage from './components/AboutPage';
 import StoreLocatorPage from './components/StoreLocatorPage';
 import AdminPage from './components/AdminPage';
@@ -23,9 +24,10 @@ import { supabase } from './services/supabase';
 import { Session } from '@supabase/supabase-js';
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<'home' | 'products' | 'product-details' | 'recipes' | 'recipe-details' | 'about' | 'stores' | 'admin' | 'privacy' | 'terms'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'products' | 'product-details' | 'recipes' | 'recipe-details' | 'story-details' | 'about' | 'stores' | 'admin' | 'privacy' | 'terms'>('home');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
+  const [selectedStory, setSelectedStory] = useState<any>(null);
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
@@ -51,6 +53,12 @@ const App: React.FC = () => {
   const handleOpenRecipe = (recipe: any) => {
     setSelectedRecipe(recipe);
     setCurrentView('recipe-details');
+    window.scrollTo(0, 0);
+  };
+
+  const handleOpenStory = (story: any) => {
+    setSelectedStory(story);
+    setCurrentView('story-details');
     window.scrollTo(0, 0);
   };
 
@@ -85,7 +93,7 @@ const App: React.FC = () => {
             <section className="py-12 bg-white">
               <PromotionCarousel onSelectProduct={handleOpenProduct} />
             </section>
-            <StoryGrid />
+            <StoryGrid onSelectStory={handleOpenStory} />
             <FeaturedImageSection />
             <ProductShowcaseSection onNavigateToProducts={() => setCurrentView('products')} />
             <StoreLocatorSection onNavigateToStores={() => setCurrentView('stores')} />
@@ -116,6 +124,13 @@ const App: React.FC = () => {
             recipe={selectedRecipe}
             onBack={handleBackToRecipes}
             onSelectProduct={handleOpenProduct}
+          />
+        )}
+
+        {currentView === 'story-details' && selectedStory && (
+          <StoryDetailsPage
+            story={selectedStory}
+            onBack={() => { setCurrentView('home'); window.scrollTo(0, 0); }}
           />
         )}
 
