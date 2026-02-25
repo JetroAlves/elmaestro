@@ -13,6 +13,7 @@ import ProductDetailsPage from './components/ProductDetailsPage';
 import RecipesPage from './components/RecipesPage';
 import RecipeDetailsPage from './components/RecipeDetailsPage';
 import StoryDetailsPage from './components/StoryDetailsPage';
+import BlogPage from './components/BlogPage';
 import AboutPage from './components/AboutPage';
 import StoreLocatorPage from './components/StoreLocatorPage';
 import AdminPage from './components/AdminPage';
@@ -24,7 +25,7 @@ import { supabase } from './services/supabase';
 import { Session } from '@supabase/supabase-js';
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<'home' | 'products' | 'product-details' | 'recipes' | 'recipe-details' | 'story-details' | 'about' | 'stores' | 'admin' | 'privacy' | 'terms'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'products' | 'product-details' | 'recipes' | 'recipe-details' | 'story-details' | 'blog' | 'about' | 'stores' | 'admin' | 'privacy' | 'terms'>('home');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
   const [selectedStory, setSelectedStory] = useState<any>(null);
@@ -130,8 +131,12 @@ const App: React.FC = () => {
         {currentView === 'story-details' && selectedStory && (
           <StoryDetailsPage
             story={selectedStory}
-            onBack={() => { setCurrentView('home'); window.scrollTo(0, 0); }}
+            onBack={() => { setCurrentView('blog'); window.scrollTo(0, 0); }}
           />
+        )}
+
+        {currentView === 'blog' && (
+          <BlogPage onSelectStory={handleOpenStory} />
         )}
 
         {currentView === 'about' && (

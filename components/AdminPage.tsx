@@ -1005,7 +1005,10 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                     <textarea value={formData.text || ''} onChange={(e) => setFormData({ ...formData, text: e.target.value })} rows={2} placeholder="Uma frase curta que aparece no card..." className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all" required></textarea>
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Conteúdo Completo (Estilo Blog)</label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Conteúdo Completo (Estilo Blog)</label>
+                      <span className="text-[8px] font-bold text-[#90784E] uppercase tracking-widest">Dica: Use **texto** para negrito</span>
+                    </div>
                     <textarea value={formData.content || ''} onChange={(e) => setFormData({ ...formData, content: e.target.value })} rows={8} placeholder="Escreva a história completa aqui..." className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all"></textarea>
                   </div>
                   <div className="space-y-2">

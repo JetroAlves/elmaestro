@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
 interface HeaderProps {
-  onNavigate: (view: 'home' | 'products' | 'recipes' | 'about' | 'stores') => void;
+  onNavigate: (view: 'home' | 'products' | 'recipes' | 'about' | 'stores' | 'blog') => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const handleNavigation = (view: 'home' | 'products' | 'recipes' | 'about' | 'stores') => {
+  const handleNavigation = (view: 'home' | 'products' | 'recipes' | 'about' | 'stores' | 'blog') => {
     onNavigate(view);
     setIsMenuOpen(false);
   };
@@ -16,6 +16,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
     { id: 'home', label: 'Home' },
     { id: 'products', label: 'Produtos' },
     { id: 'recipes', label: 'Receitas' },
+    { id: 'blog', label: 'Blog' },
     { id: 'stores', label: 'Onde Encontrar' },
     { id: 'about', label: 'Sobre' },
   ] as const;
