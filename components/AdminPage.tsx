@@ -85,6 +85,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
   const [mobileImagePreview, setMobileImagePreview] = useState<string | null>(null);
   const [desktopFile, setDesktopFile] = useState<File | null>(null);
   const [mobileFile, setMobileFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [showcaseSelections, setShowcaseSelections] = useState<string[]>(['', '', '']);
   const [locatorSelections, setLocatorSelections] = useState<string[]>(['', '', '', '', '', '']);
@@ -214,6 +216,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     setFormData(initialFormData);
     setImagePreview(item.image || item.image_desktop || null);
     setMobileImagePreview(item.image_mobile || null);
+    setVideoPreview(item.video_url || null);
     setIsModalOpen(true);
   };
 
@@ -242,6 +245,15 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
         }
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setVideoFile(file);
+      const url = URL.createObjectURL(file);
+      setVideoPreview(url);
     }
   };
 
@@ -362,6 +374,11 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
         mobileImageUrl = await uploadImage(mobileFile, activeTab);
       }
 
+      let finalVideoUrl = videoPreview;
+      if (videoFile) {
+        finalVideoUrl = await uploadImage(videoFile, activeTab);
+      }
+
       let processedData = {
         ...formData,
         image: activeImageUrl
@@ -390,6 +407,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
         delete processedData.image;
         processedData.image_desktop = activeImageUrl;
         processedData.image_mobile = mobileImageUrl;
+        processedData.video_url = finalVideoUrl;
 
         // Lógica de Redirecionamento Padrão
         if (!processedData.link || processedData.link.trim() === '') {
@@ -483,6 +501,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     setEditingItem(null);
     setDesktopFile(null);
     setMobileFile(null);
+    setVideoFile(null);
+    setVideoPreview(null);
   };
 
 
@@ -1073,6 +1093,22 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                       </div>
                     </div>
                   </div>
+
+                  {activeTab === 'banners' && (
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Vídeo de Fundo (Opcional)</label>
+                      <div className="relative group">
+                        <input type="file" accept="video/*" onChange={handleVideoChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                        <div className={`w-full border-2 border-dashed rounded-[2rem] p-6 flex flex-col items-center justify-center transition-all min-h-[160px] ${videoPreview ? 'border-[#90784E] bg-white' : 'border-stone-200 bg-white/50'}`}>
+                          {videoPreview ? (
+                            <video src={videoPreview} className="h-24 w-auto rounded-xl" muted />
+                          ) : (
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#101010]">Upload Vídeo (MP4, etc)</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {activeTab === 'banners' && (
                     <div className="space-y-2">

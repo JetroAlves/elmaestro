@@ -96,12 +96,24 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores })
                 zIndex: index === currentIndex ? 1 : 0,
               }}
             >
-              {/* Desktop image */}
-              <img
-                src={banner.image_desktop || fallbackUrl}
-                alt={banner.button_text || 'Banner'}
-                className={`absolute inset-0 w-full h-full object-cover ${banner.image_mobile ? 'hidden md:block' : ''}`}
-              />
+              {/* Desktop Video or Image */}
+              {banner.video_url ? (
+                <video
+                  src={banner.video_url}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className={`absolute inset-0 w-full h-full object-cover ${banner.image_mobile ? 'hidden md:block' : ''}`}
+                />
+              ) : (
+                <img
+                  src={banner.image_desktop || fallbackUrl}
+                  alt={banner.button_text || 'Banner'}
+                  className={`absolute inset-0 w-full h-full object-cover ${banner.image_mobile ? 'hidden md:block' : ''}`}
+                />
+              )}
+
               {/* Mobile image (if available) */}
               {banner.image_mobile && (
                 <img
