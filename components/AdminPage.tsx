@@ -87,6 +87,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
   const [mobileFile, setMobileFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [stickerFile, setStickerFile] = useState<File | null>(null);
+  const [stickerPreview, setStickerPreview] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [showcaseSelections, setShowcaseSelections] = useState<string[]>(['', '', '']);
   const [locatorSelections, setLocatorSelections] = useState<string[]>(['', '', '', '', '', '']);
@@ -217,6 +219,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     setImagePreview(item.image || item.image_desktop || null);
     setMobileImagePreview(item.image_mobile || null);
     setVideoPreview(item.video_url || null);
+    setStickerPreview(item.sticker_url || null);
     setIsModalOpen(true);
   };
 
@@ -254,6 +257,18 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
       setVideoFile(file);
       const url = URL.createObjectURL(file);
       setVideoPreview(url);
+    }
+  };
+
+  const handleStickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setStickerFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setStickerPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -378,6 +393,10 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
       if (videoFile) {
         finalVideoUrl = await uploadImage(videoFile, activeTab);
       }
+      let finalStickerUrl = stickerPreview;
+      if (stickerFile) {
+        finalStickerUrl = await uploadImage(stickerFile, activeTab);
+      }
 
       let processedData = {
         ...formData,
@@ -408,6 +427,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
         processedData.image_desktop = activeImageUrl;
         processedData.image_mobile = mobileImageUrl;
         processedData.video_url = finalVideoUrl;
+        processedData.sticker_url = finalStickerUrl;
 
         // Lógica de Redirecionamento Padrão
         if (!processedData.link || processedData.link.trim() === '') {
@@ -503,6 +523,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     setMobileFile(null);
     setVideoFile(null);
     setVideoPreview(null);
+    setStickerFile(null);
+    setStickerPreview(null);
   };
 
 
@@ -1095,6 +1117,23 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                       </div>
                     </div>
                   </div>
+                  {activeTab === 'banners' && (
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Etiqueta/Selo (Canto Superior Direito)</label>
+                      <div className="relative group">
+                        <input type="file" accept="image/*" onChange={handleStickerChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                        <div className={`w-full border-2 border-dashed rounded-[2rem] p-6 flex flex-col items-center justify-center transition-all min-h-[160px] ${stickerPreview ? 'border-[#90784E] bg-white' : 'border-stone-200 bg-white/50'}`}>
+                          {stickerPreview ? (
+                            <div className="relative w-24 h-24 bg-stone-50 rounded-full flex items-center justify-center overflow-hidden border border-[#90784E]/20">
+                              <img src={stickerPreview} className="w-full h-full object-contain p-2" />
+                            </div>
+                          ) : (
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#101010]">Upload Etiqueta</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {activeTab === 'banners' && (
                     <div className="space-y-2">

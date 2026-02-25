@@ -22,42 +22,60 @@ const FeaturedImageSection: React.FC = () => {
     fetchFeatured();
   }, []);
 
+  const handleBannerClick = () => {
+    if (!banner) return;
+    const link = banner.link || '/produtos';
+    if (link.startsWith('http')) {
+      window.open(link, '_blank');
+    } else {
+      window.location.href = link;
+    }
+  };
+
+  const fallbackUrl = "https://sabordaserramg.com.br/wp-content/uploads/2019/05/fonduee.jpg";
+
   return (
     <section className="bg-[#101010] py-24 px-4 overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <div className="relative rounded-[3rem] overflow-hidden group">
-          {/* Imagem de Destaque - Escurecida para melhor contraste */}
+        <div
+          className="relative rounded-[3rem] overflow-hidden group cursor-pointer"
+          onClick={handleBannerClick}
+        >
+          {/* Background Layer (Video or Image) */}
           <div className="aspect-[3/4] sm:aspect-square md:aspect-[21/9] w-full relative">
-            <img
-              src={banner?.image_desktop || "https://sabordaserramg.com.br/wp-content/uploads/2019/05/fonduee.jpg"}
-              alt="Queijo Derretido Premium"
-              className="w-full h-full object-cover brightness-[0.4] group-hover:scale-105 transition-transform duration-[2s]"
-            />
+            {banner?.video_url ? (
+              <video
+                src={banner.video_url}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover brightness-[0.5] group-hover:scale-105 transition-transform duration-[2s]"
+              />
+            ) : (
+              <img
+                src={banner?.image_desktop || fallbackUrl}
+                alt="Highlight"
+                className="w-full h-full object-cover brightness-[0.4] group-hover:scale-105 transition-transform duration-[2s]"
+              />
+            )}
 
-            {/* CTA Button Centered */}
-            {banner?.button_text && (
-              <div className="absolute inset-0 flex items-center justify-center z-20">
-                <button
-                  onClick={() => {
-                    const link = banner.link || '/produtos';
-                    if (link.startsWith('http')) {
-                      window.open(link, '_blank');
-                    } else {
-                      // Usando window.location como fallback ou se houver um router global
-                      window.location.href = link;
-                    }
-                  }}
-                  className="bg-white text-[#101010] px-10 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:scale-110 transition-transform shadow-2xl"
-                >
-                  {banner.button_text}
-                </button>
+            {/* Sticker / Label (Floating Top Right) */}
+            {banner?.sticker_url && (
+              <div className="absolute top-8 right-8 z-30 w-32 h-32 md:w-48 md:h-48 group-hover:scale-110 transition-transform duration-700">
+                <div className="w-full h-full rounded-full overflow-hidden border-4 border-white/20 shadow-2xl backdrop-blur-sm bg-white/10 flex items-center justify-center p-4">
+                  <img
+                    src={banner.sticker_url}
+                    alt="Sticker"
+                    className="w-full h-full object-contain animate-spin-slow"
+                  />
+                </div>
               </div>
             )}
 
-            {/* Overlay de gradiente removido ou simplificado se preferir, mas vou manter para suavizar a imagem */}
+            {/* Dark overlay for extra depth */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/20 via-transparent to-[#101010]/40"></div>
           </div>
-
         </div>
       </div>
 
