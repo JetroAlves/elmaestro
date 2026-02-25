@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../services/supabase';
 
-type AdminTab = 'dashboard' | 'products' | 'recipes' | 'banners' | 'promotions' | 'stories';
+type AdminTab = 'dashboard' | 'products' | 'recipes' | 'banners' | 'promotions' | 'stories' | 'categories' | 'showcase';
 
 interface AdminPageProps {
   onExit: () => void;
@@ -96,6 +96,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
   const [newCountryFlag, setNewCountryFlag] = useState<File | null>(null);
   const [flagPreview, setFlagPreview] = useState<string | null>(null);
   const [metadataLoading, setMetadataLoading] = useState(false);
+  const [metadataSubTab, setMetadataSubTab] = useState<'brand' | 'country' | 'type'>('brand');
 
   useEffect(() => {
     if (activeTab === 'showcase' && showcase.length > 0) {
@@ -407,6 +408,13 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     if (activeTab === 'promotions') tableName = 'promotion_carousel';
     if (activeTab === 'stories') tableName = 'story_grid';
 
+    // Suporte para exclusão de metadados
+    if (tableName === '' && activeTab === 'categories') {
+      if (metadataSubTab === 'brand') tableName = 'brands';
+      if (metadataSubTab === 'country') tableName = 'countries';
+      if (metadataSubTab === 'type') tableName = 'product_types';
+    }
+
     if (tableName) {
       const { error } = await supabase.from(tableName).delete().eq('id', id);
       if (!error) {
@@ -437,6 +445,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     { id: 'promotions', label: 'Carrossel Promo', icon: Icons.Banners },
     { id: 'stories', label: 'StoryGrid', icon: Icons.Dashboard },
     { id: 'showcase', label: 'Destaques Home', icon: Icons.Showcase },
+    { id: 'categories', label: 'Categorias', icon: Icons.Categories },
   ];
 
   const currentList =
@@ -612,6 +621,66 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                 {loading ? 'SALVANDO...' : 'SALVAR CARROSSEL'}
               </button>
             </div>
+          </div>
+        ) : activeTab === 'categories' ? (
+          <div className="space-y-8 max-w-5xl">
+            <div className="flex gap-4">
+              {(['brand', 'country', 'type'] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setMetadataSubTab(tab)}
+                  className={`px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${metadataSubTab === tab ? 'bg-[#101010] text-white shadow-lg' : 'bg-white text-stone-400 hover:text-[#101010]'}`}
+                >
+                  {tab === 'brand' ? 'Marcas' : tab === 'country' ? 'Países' : 'Tipos'}
+                </button>
+              ))}
+            </div>
+
+            <div className="bg-white rounded-[3rem] shadow-xl overflow-hidden border border-stone-100">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-stone-50 border-b border-stone-100">
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">
+                      {metadataSubTab === 'country' ? 'Bandeira' : 'ID'}
+                    </th>
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Nome</th>
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400 text-right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-50">
+                  {(metadataSubTab === 'brand' ? dbBrands : metadataSubTab === 'country' ? dbCountries : dbTypes).length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="px-10 py-20 text-center text-stone-400 font-black uppercase text-xs tracking-widest italic">Nenhum item cadastrado</td>
+                    </tr>
+                  ) : (metadataSubTab === 'brand' ? dbBrands : metadataSubTab === 'country' ? dbCountries : dbTypes).map((item) => (
+                    <tr key={item.id} className="hover:bg-stone-50/50 transition-colors">
+                      <td className="px-10 py-6">
+                        {metadataSubTab === 'country' && item.flag_url ? (
+                          <div className="w-10 h-6 bg-[#FCFAE6] rounded overflow-hidden border border-stone-200">
+                            <img src={item.flag_url} className="w-full h-full object-contain" />
+                          </div>
+                        ) : (
+                          <span className="text-[8px] text-stone-300 font-mono">#{item.id.slice(0, 8)}</span>
+                        )}
+                      </td>
+                      <td className="px-10 py-6">
+                        <p className="text-[#101010] font-black text-sm uppercase tracking-tighter">{item.name}</p>
+                      </td>
+                      <td className="px-10 py-6 text-right">
+                        <button onClick={() => deleteItem(item.id)} className="text-red-400 text-[10px] font-black uppercase tracking-widest hover:underline">Excluir</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <button
+              onClick={() => { setMetadataType(metadataSubTab); setIsMetadataModalOpen(true); }}
+              className="bg-[#90784E] text-white px-10 py-4 rounded-full font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all shadow-xl"
+            >
+              Adicionar {metadataSubTab === 'brand' ? 'Marca' : metadataSubTab === 'country' ? 'País' : 'Tipo'}
+            </button>
           </div>
         ) : (
           <div className="bg-white rounded-[3rem] shadow-xl overflow-hidden border border-stone-100">
