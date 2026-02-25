@@ -383,7 +383,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
       {/* Sidebar */}
       <aside className="w-72 bg-[#101010] flex flex-col h-screen sticky top-0 shrink-0">
         <div className="p-8 border-b border-stone-800 flex items-center justify-between">
-          <img src="https://kyflpnhnxnivnuysrszr.supabase.co/storage/v1/object/public/images/204a94a1-f534-43b9-b67e-9a3a2c9b2baf/LogoElMaestro.png" alt="Logo" className="h-8 brightness-0 invert" />
+          <img src="https://mqcjdxflipzlwhfrfyky.supabase.co/storage/v1/object/public/images/logomarca/LogoElMaestro.png" alt="Logo" className="h-8 shadow-sm" />
           <span className="bg-[#90784E] text-white text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-widest">ADM</span>
         </div>
         <nav className="flex-grow p-6 space-y-2">

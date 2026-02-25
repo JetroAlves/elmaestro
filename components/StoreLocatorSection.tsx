@@ -70,10 +70,9 @@ const StoreLocatorSection: React.FC<StoreLocatorSectionProps> = ({ onNavigateToS
           {/* Círculo Preto com Logomarca (Substituindo o ícone branco) */}
           <div className="bg-[#101010] p-4 rounded-full shadow-2xl mb-2 inline-flex items-center justify-center w-20 h-20 border-2 border-white/10 overflow-hidden">
             <img
-              src="https://kyflpnhnxnivnuysrszr.supabase.co/storage/v1/object/public/images/204a94a1-f534-43b9-b67e-9a3a2c9b2baf/LogoElMaestro.png"
+              src="https://mqcjdxflipzlwhfrfyky.supabase.co/storage/v1/object/public/images/logomarca/LogoElMaestro.png"
               alt="Mg Queijos Logo"
-              className="w-full h-auto object-contain brightness-0 invert"
-              style={{ filter: 'brightness(0) invert(1)' }}
+              className="w-full h-auto object-contain"
             />
           </div>
 

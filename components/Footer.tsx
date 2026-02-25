@@ -54,12 +54,9 @@ const Footer: React.FC<FooterProps> = ({ onNavigateAdmin, onNavigate }) => {
         <div className="col-span-1 md:col-span-1">
           <div className="mb-8">
             <img
-              src="https://kyflpnhnxnivnuysrszr.supabase.co/storage/v1/object/public/images/204a94a1-f534-43b9-b67e-9a3a2c9b2baf/LogoElMaestro.png"
+              src="https://mqcjdxflipzlwhfrfyky.supabase.co/storage/v1/object/public/images/logomarca/LogoElMaestro.png"
               alt="Mg Queijos Logo"
-              className="h-20 md:h-24 w-auto brightness-0 invert opacity-90 transition-all hover:scale-105"
-              style={{
-                filter: 'brightness(0) saturate(100%) invert(98%) sepia(4%) saturate(737%) hue-rotate(320deg) brightness(105%) contrast(98%)'
-              }}
+              className="h-20 md:h-24 w-auto opacity-90 transition-all hover:scale-105"
             />
           </div>
           <div className="space-y-4 text-xs leading-relaxed text-stone-500 font-bold">

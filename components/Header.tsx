@@ -25,17 +25,14 @@ const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
       <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between">
         {/* Logo Left */}
         <div className="flex-shrink-0">
-          <button 
+          <button
             onClick={() => handleNavigation('home')}
             className="block outline-none"
           >
-            <img 
-              src="https://kyflpnhnxnivnuysrszr.supabase.co/storage/v1/object/public/images/204a94a1-f534-43b9-b67e-9a3a2c9b2baf/LogoElMaestro.png" 
-              alt="Mg Queijos Logo" 
-              className="h-10 md:h-14 w-auto brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
-              style={{ 
-                filter: 'brightness(0) saturate(100%) invert(98%) sepia(4%) saturate(737%) hue-rotate(320deg) brightness(105%) contrast(98%)' 
-              }}
+            <img
+              src="https://mqcjdxflipzlwhfrfyky.supabase.co/storage/v1/object/public/images/logomarca/LogoElMaestro.png"
+              alt="Mg Queijos Logo"
+              className="h-10 md:h-14 w-auto opacity-90 hover:opacity-100 transition-opacity"
             />
           </button>
         </div>
@@ -44,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
         <div className="flex items-center gap-6">
           <nav className="hidden lg:flex gap-10 uppercase text-[11px] font-black tracking-[0.2em] text-[#90784E]">
             {menuLinks.map((link) => (
-              <button 
+              <button
                 key={link.id}
                 onClick={() => handleNavigation(link.id as any)}
                 className="hover:text-white transition-colors cursor-pointer outline-none"
@@ -53,9 +50,9 @@ const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
               </button>
             ))}
           </nav>
-          
+
           {/* Hamburger Button (Mobile) */}
-          <button 
+          <button
             onClick={() => setIsMenuOpen(true)}
             className="text-[#90784E] lg:hidden hover:text-white transition-colors"
           >
@@ -70,12 +67,12 @@ const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
       <div className={`fixed inset-0 z-[100] bg-[#101010] transition-all duration-500 ease-in-out lg:hidden ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         {/* Header inside Mobile Menu */}
         <div className="flex justify-between items-center p-6 border-b border-stone-800">
-          <img 
-            src="https://kyflpnhnxnivnuysrszr.supabase.co/storage/v1/object/public/images/204a94a1-f534-43b9-b67e-9a3a2c9b2baf/LogoElMaestro.png" 
-            alt="Logo" 
-            className="h-10 brightness-0 invert opacity-90"
+          <img
+            src="https://mqcjdxflipzlwhfrfyky.supabase.co/storage/v1/object/public/images/logomarca/LogoElMaestro.png"
+            alt="Logo"
+            className="h-10 opacity-90"
           />
-          <button 
+          <button
             onClick={() => setIsMenuOpen(false)}
             className="text-[#90784E] hover:text-white transition-colors"
           >
@@ -96,10 +93,10 @@ const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
               {link.label}
             </button>
           ))}
-          
+
           {/* Decorative Divider */}
           <div className="w-12 h-1 bg-[#90784E] rounded-full mt-4"></div>
-          
+
           <p className="text-[#90784E] text-[10px] font-black uppercase tracking-[0.4em] opacity-60">
             Sabor Real Mg Queijos
           </p>

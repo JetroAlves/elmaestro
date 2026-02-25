@@ -7,20 +7,20 @@ const AboutPage: React.FC = () => {
       <section className="relative py-32 md:py-48 bg-[#101010] overflow-hidden">
         {/* Decorative Background Elements */}
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-10">
-          <img 
-            src="https://images.unsplash.com/photo-1486328228599-85db4443971f?auto=format&fit=crop&q=80&w=1200" 
-            alt="Textura de Queijo" 
+          <img
+            src="https://images.unsplash.com/photo-1486328228599-85db4443971f?auto=format&fit=crop&q=80&w=1200"
+            alt="Textura de Queijo"
             className="w-full h-full object-cover grayscale"
           />
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
           <div className="max-w-3xl">
             <span className="text-[#90784E] font-black text-xs md:text-sm uppercase tracking-[0.4em] mb-6 block">
               Nosso Manifesto
             </span>
             <h1 className="text-white text-6xl md:text-9xl font-[900] uppercase tracking-tighter leading-[0.85] mb-8">
-              O COMPROMISSO <br/>
+              O COMPROMISSO <br />
               <span className="text-[#90784E]">COM O REAL.</span>
             </h1>
             <p className="text-white/80 text-xl md:text-2xl font-medium leading-relaxed">
@@ -35,9 +35,9 @@ const AboutPage: React.FC = () => {
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 md:gap-24">
           <div className="w-full lg:w-1/2">
             <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=1000" 
-                alt="Família de Produtores" 
+              <img
+                src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=1000"
+                alt="Família de Produtores"
                 className="rounded-[3rem] shadow-2xl relative z-10"
               />
               <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-[#90784E] rounded-[3rem] -z-0 hidden md:block opacity-20"></div>
@@ -45,7 +45,7 @@ const AboutPage: React.FC = () => {
           </div>
           <div className="w-full lg:w-1/2 space-y-8">
             <h2 className="text-[#101010] text-4xl md:text-6xl font-[900] uppercase tracking-tighter leading-tight">
-              PROPRIEDADE DE <br/>
+              PROPRIEDADE DE <br />
               <span className="text-[#90784E]">QUEM PRODUZ.</span>
             </h2>
             <p className="text-lg md:text-xl text-[#101010]/70 font-medium leading-relaxed">
@@ -55,10 +55,10 @@ const AboutPage: React.FC = () => {
               Quando você escolhe um queijo Mg Queijos, você está apoiando diretamente a agricultura familiar e garantindo que o conhecimento ancestral da produção leiteira seja passado para a próxima geração.
             </p>
             <div className="pt-6">
-               <div className="bg-[#101010] p-8 rounded-[2rem] inline-block text-white">
-                  <p className="text-4xl font-[900] text-[#90784E]">120+</p>
-                  <p className="text-xs font-black uppercase tracking-widest opacity-60">Famílias Cooperadas</p>
-               </div>
+              <div className="bg-[#101010] p-8 rounded-[2rem] inline-block text-white">
+                <p className="text-4xl font-[900] text-[#90784E]">120+</p>
+                <p className="text-xs font-black uppercase tracking-widest opacity-60">Famílias Cooperadas</p>
+              </div>
             </div>
           </div>
         </div>
@@ -113,7 +113,7 @@ const AboutPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between mb-20 gap-8">
             <h2 className="text-[#101010] text-4xl md:text-6xl font-[900] uppercase tracking-tighter leading-none">
-              OS MESTRES <br/> <span className="text-[#90784E]">QUEIJEIROS.</span>
+              OS MESTRES <br /> <span className="text-[#90784E]">QUEIJEIROS.</span>
             </h2>
             <p className="max-w-md text-[#101010]/60 font-medium text-lg italic text-right">
               "Um queijo não é feito apenas em uma fábrica. Ele é cultivado no campo e finalizado na cave pela sensibilidade humana."
@@ -122,8 +122,8 @@ const AboutPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div className="relative group overflow-hidden rounded-[3rem] aspect-[4/5] md:aspect-auto h-[600px]">
-              <img 
-                src="https://naopiradesopila.com/wp-content/uploads/blogger/-24ofZPd8Rqg/WCd4VCxzI/AAAAAAABVVg/4rULkelRqw8uygKLp7FSTCHJD_ZRUwq_QCLcB/s1600/Toni%2B%25282%2529.JPG" 
+              <img
+                src="https://naopiradesopila.com/wp-content/uploads/blogger/-24ofZPd8Rqg/WCd4VCxzI/AAAAAAABVVg/4rULkelRqw8uygKLp7FSTCHJD_ZRUwq_QCLcB/s1600/Toni%2B%25282%2529.JPG"
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 alt="Mestre Queijeiro em ação"
               />
@@ -136,8 +136,8 @@ const AboutPage: React.FC = () => {
             </div>
 
             <div className="relative group overflow-hidden rounded-[3rem] aspect-[4/5] md:aspect-auto h-[600px]">
-              <img 
-                src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1000" 
+              <img
+                src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1000"
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 alt="Produção artesanal"
               />
@@ -155,16 +155,16 @@ const AboutPage: React.FC = () => {
       {/* Standards Section */}
       <section className="bg-[#101010] py-24 md:py-40 px-4 md:px-8 text-white relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-5">
-           <p className="text-[20vw] font-black uppercase whitespace-nowrap leading-none tracking-tighter select-none">
-             QUALIDADE MG QUEIJOS QUALIDADE MG QUEIJOS
-           </p>
+          <p className="text-[20vw] font-black uppercase whitespace-nowrap leading-none tracking-tighter select-none">
+            QUALIDADE MG QUEIJOS QUALIDADE MG QUEIJOS
+          </p>
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
             <div className="space-y-10">
               <h2 className="text-5xl md:text-8xl font-[900] uppercase tracking-tighter leading-none">
-                O PADRÃO <br/> <span className="text-[#90784E]">OURO.</span>
+                O PADRÃO <br /> <span className="text-[#90784E]">OURO.</span>
               </h2>
               <div className="space-y-8">
                 {[
@@ -180,12 +180,12 @@ const AboutPage: React.FC = () => {
                 ))}
               </div>
             </div>
-            
+
             <div className="bg-[#FCFAE6] rounded-[3rem] p-12 md:p-20 text-[#101010] shadow-2xl">
-              <img 
-                src="https://kyflpnhnxnivnuysrszr.supabase.co/storage/v1/object/public/images/204a94a1-f534-43b9-b67e-9a3a2c9b2baf/LogoElMaestro.png" 
-                alt="Logo" 
-                className="h-12 w-auto mb-10 grayscale brightness-0 opacity-80"
+              <img
+                src="https://mqcjdxflipzlwhfrfyky.supabase.co/storage/v1/object/public/images/logomarca/LogoElMaestro.png"
+                alt="Logo"
+                className="h-12 w-auto mb-10 transition-all duration-500 grayscale-0 hover:grayscale cursor-pointer"
               />
               <h3 className="text-3xl font-[900] uppercase tracking-tighter mb-6">NOSSA PROMESSA</h3>
               <p className="text-lg font-medium leading-relaxed text-stone-600 mb-8">
@@ -203,7 +203,7 @@ const AboutPage: React.FC = () => {
       <section className="py-24 md:py-40 px-4 text-center">
         <div className="max-w-4xl mx-auto space-y-10">
           <h2 className="text-[#101010] text-5xl md:text-7xl font-[900] uppercase tracking-tighter leading-none">
-            EXPERIMENTE O <br/> <span className="text-[#90784E]">DIFERENTE.</span>
+            EXPERIMENTE O <br /> <span className="text-[#90784E]">DIFERENTE.</span>
           </h2>
           <p className="text-lg md:text-xl text-[#101010]/60 font-medium">
             Agora que você conhece nosso coração, descubra nossos sabores.

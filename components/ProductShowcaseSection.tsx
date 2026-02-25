@@ -46,12 +46,9 @@ const ProductShowcaseSection: React.FC<ProductShowcaseSectionProps> = ({ onNavig
           <div className="absolute top-10 left-10 z-20">
             <div className="w-24 h-24 bg-[#101010] rounded-full flex flex-col items-center justify-center p-4 shadow-xl border-2 border-white/10">
               <img
-                src="https://mgqueijos.com.br/wp-content/uploads/2020/05/El-Maestro-copy-300x210.png"
+                src="https://mqcjdxflipzlwhfrfyky.supabase.co/storage/v1/object/public/images/logomarca/LogoElMaestro.png"
                 alt="Selo Mg Queijos"
-                className="w-full h-auto brightness-0 invert opacity-90"
-                style={{
-                  filter: 'brightness(0) saturate(100%) invert(98%) sepia(4%) saturate(737%) hue-rotate(320deg) brightness(105%) contrast(98%)'
-                }}
+                className="w-full h-auto opacity-90"
               />
             </div>
           </div>
