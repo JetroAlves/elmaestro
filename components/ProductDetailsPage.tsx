@@ -42,8 +42,11 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ product, onBack
               <span className="bg-[#90784E] text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
                 {product.brand}
               </span>
-              <span className="text-[#101010] font-black text-[10px] uppercase tracking-widest opacity-40">
-                {product.country} • {product.type}
+              <span className="text-[#101010] font-black text-[10px] uppercase tracking-widest opacity-40 flex items-center gap-1.5">
+                {product.brand} • {product.country} • {product.type}
+                {product.flag_url && (
+                  <img src={product.flag_url} alt={product.country} className="h-3 w-auto object-contain rounded-[1px] shadow-sm ml-1 opacity-100 invert-0" style={{ opacity: 1, filter: 'none' }} />
+                )}
               </span>
             </div>
             <h1 className="text-5xl md:text-8xl font-[900] text-[#101010] uppercase tracking-tighter leading-[0.85] mb-8">

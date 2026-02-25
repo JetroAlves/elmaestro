@@ -7,14 +7,7 @@ interface AdminPageProps {
   onExit: () => void;
 }
 
-const BRANDS = ["Belprado", "Colonial", "El Maestro", "El Maestro Origens", "La Paulina", "Trentini"];
-const COUNTRIES = ["Argentina", "Brasil", "Holanda", "Itália", "Uruguai"];
-const PRODUCT_TYPES = [
-  "Cabra", "Colonial", "Doce de Leite", "Gouda", "Grana Padano",
-  "Maasdam", "Manteiga", "Minas", "Montanhês", "Mozarela",
-  "Ovelha", "Parmesão", "Prato", "Proosdij", "Provolone",
-  "Queijo Azul", "Serrano"
-];
+// Hardcoded values replaced by dynamic data from Supabase
 
 const BANNER_POSITIONS = [
   { id: 'hero', label: 'Hero Principal (Topo Home)' },
@@ -48,6 +41,12 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
   const [promotions, setPromotions] = useState<any[]>([]);
   const [stories, setStories] = useState<any[]>([]);
   const [showcase, setShowcase] = useState<any[]>([]);
+
+  // Novos estados para metadados dinâmicos
+  const [dbBrands, setDbBrands] = useState<any[]>([]);
+  const [dbCountries, setDbCountries] = useState<any[]>([]);
+  const [dbTypes, setDbTypes] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -56,13 +55,16 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
 
   const fetchAllData = async () => {
     setLoading(true);
-    const [p, r, b, pr, st, sh] = await Promise.all([
+    const [p, r, b, pr, st, sh, brs, ctrs, tps] = await Promise.all([
       supabase.from('products').select('*').order('created_at', { ascending: false }),
       supabase.from('recipes').select('*, main_product:products(*)').order('created_at', { ascending: false }),
       supabase.from('banners').select('*').order('created_at', { ascending: false }),
       supabase.from('promotion_carousel').select('*').order('sorting_order', { ascending: true }),
       supabase.from('story_grid').select('*').order('sorting_order', { ascending: true }),
-      supabase.from('home_showcase').select('*, products(*)').order('position', { ascending: true })
+      supabase.from('home_showcase').select('*, products(*)').order('position', { ascending: true }),
+      supabase.from('brands').select('*').order('name', { ascending: true }),
+      supabase.from('countries').select('*').order('name', { ascending: true }),
+      supabase.from('product_types').select('*').order('name', { ascending: true })
     ]);
 
     if (p.data) setProducts(p.data);
@@ -71,6 +73,9 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     if (pr.data) setPromotions(pr.data);
     if (st.data) setStories(st.data);
     if (sh.data) setShowcase(sh.data);
+    if (brs.data) setDbBrands(brs.data);
+    if (ctrs.data) setDbCountries(ctrs.data);
+    if (tps.data) setDbTypes(tps.data);
     setLoading(false);
   };
 
@@ -83,6 +88,14 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [showcaseSelections, setShowcaseSelections] = useState<string[]>(['', '', '']);
   const [locatorSelections, setLocatorSelections] = useState<string[]>(['', '', '', '', '', '']);
+
+  // Estados para inserção rápida de metadados
+  const [isMetadataModalOpen, setIsMetadataModalOpen] = useState(false);
+  const [metadataType, setMetadataType] = useState<'brand' | 'type' | 'country'>('brand');
+  const [newMetadataName, setNewMetadataName] = useState('');
+  const [newCountryFlag, setNewCountryFlag] = useState<File | null>(null);
+  const [flagPreview, setFlagPreview] = useState<string | null>(null);
+  const [metadataLoading, setMetadataLoading] = useState(false);
 
   useEffect(() => {
     if (activeTab === 'showcase' && showcase.length > 0) {
@@ -133,6 +146,49 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     }
   };
 
+  const handleSaveMetadata = async () => {
+    if (!newMetadataName.trim()) {
+      alert("Por favor, digite um nome.");
+      return;
+    }
+
+    setMetadataLoading(true);
+    try {
+      let finalFlagUrl = '';
+      if (metadataType === 'country' && newCountryFlag) {
+        finalFlagUrl = await uploadImage(newCountryFlag, 'countries');
+      }
+
+      let tableName = '';
+      let data: any = { name: newMetadataName };
+
+      if (metadataType === 'brand') tableName = 'brands';
+      if (metadataType === 'type') tableName = 'product_types';
+      if (metadataType === 'country') {
+        tableName = 'countries';
+        data.flag_url = finalFlagUrl;
+      }
+
+      const { error } = await supabase.from(tableName).insert(data);
+      if (error) throw error;
+
+      alert(`${metadataType === 'brand' ? 'Marca' : metadataType === 'type' ? 'Tipo' : 'País'} adicionado com sucesso!`);
+
+      // Resetar estados
+      setNewMetadataName('');
+      setNewCountryFlag(null);
+      setFlagPreview(null);
+      setIsMetadataModalOpen(false);
+
+      // Atualizar listas
+      fetchAllData();
+    } catch (err: any) {
+      alert("Erro ao salvar: " + err.message);
+    } finally {
+      setMetadataLoading(false);
+    }
+  };
+
   const handleEdit = (item: any) => {
     setEditingItem(item);
     const initialFormData = { ...item };
@@ -173,6 +229,18 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
         } else {
           setImagePreview(reader.result as string);
         }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFlagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewCountryFlag(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFlagPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -627,24 +695,33 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                     <input type="text" value={formData.name || ''} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Ex: Parmesão Black Matura 12" className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all" required />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Marca</label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Marca</label>
+                      <button type="button" onClick={() => { setMetadataType('brand'); setIsMetadataModalOpen(true); }} className="text-[#90784E] text-[10px] font-black uppercase hover:underline">+ Novo</button>
+                    </div>
                     <select value={formData.brand || ''} onChange={(e) => setFormData({ ...formData, brand: e.target.value })} className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none" required>
                       <option value="">Selecione...</option>
-                      {BRANDS.map(b => <option key={b} value={b}>{b}</option>)}
+                      {dbBrands.map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">País</label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">País</label>
+                      <button type="button" onClick={() => { setMetadataType('country'); setIsMetadataModalOpen(true); }} className="text-[#90784E] text-[10px] font-black uppercase hover:underline">+ Novo</button>
+                    </div>
                     <select value={formData.country || ''} onChange={(e) => setFormData({ ...formData, country: e.target.value })} className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none" required>
                       <option value="">Selecione...</option>
-                      {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
+                      {dbCountries.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Tipo</label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Tipo</label>
+                      <button type="button" onClick={() => { setMetadataType('type'); setIsMetadataModalOpen(true); }} className="text-[#90784E] text-[10px] font-black uppercase hover:underline">+ Novo</button>
+                    </div>
                     <select value={formData.type || ''} onChange={(e) => setFormData({ ...formData, type: e.target.value })} className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none" required>
                       <option value="">Selecione...</option>
-                      {PRODUCT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                      {dbTypes.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
                     </select>
                   </div>
                   <div className="space-y-2 md:col-span-2">
@@ -890,6 +967,76 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                 <button type="button" onClick={closeModal} className="px-12 border-2 border-[#101010] text-[#101010] rounded-full font-black text-xs uppercase tracking-widest hover:bg-white transition-all">CANCELAR</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL METADADOS (Marcas, Tipos, Países) */}
+      {isMetadataModalOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#101010]/95 backdrop-blur-xl" onClick={() => setIsMetadataModalOpen(false)} />
+          <div className="relative w-full max-w-lg bg-[#FCFAE6] rounded-[3rem] shadow-2xl p-10 md:p-14 overflow-hidden border border-white/20">
+            <h2 className="text-3xl font-black text-[#101010] uppercase tracking-tighter mb-10 flex items-center gap-4">
+              <span className="bg-[#90784E] text-white p-3 rounded-2xl">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+              </span>
+              Cadastrar {metadataType === 'brand' ? 'Marca' : metadataType === 'type' ? 'Tipo' : 'País'}
+            </h2>
+
+            <div className="space-y-8">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Nome</label>
+                <input
+                  type="text"
+                  value={newMetadataName}
+                  onChange={(e) => setNewMetadataName(e.target.value)}
+                  placeholder={`Digite o nome da ${metadataType === 'brand' ? 'marca' : metadataType === 'type' ? 'tipo' : 'país'}...`}
+                  className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all"
+                />
+              </div>
+
+              {metadataType === 'country' && (
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60 text-center block">Bandeira do País</label>
+                  <div className="relative group">
+                    <input type="file" accept="image/*" onChange={handleFlagChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                    <div className={`w-full border-2 border-dashed rounded-[2rem] p-8 flex flex-col items-center justify-center transition-all ${flagPreview ? 'border-[#90784E] bg-white' : 'border-stone-200 bg-white/50 hover:border-[#90784E]'}`}>
+                      {flagPreview ? (
+                        <div className="relative">
+                          <img src={flagPreview} className="h-20 w-auto object-contain rounded shadow-lg" alt="Preview Bandeira" />
+                          <div className="absolute -top-2 -right-2 bg-[#90784E] text-white p-1 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-stone-300 mb-4 group-hover:scale-110 transition-transform"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Upload Bandeira</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-4 pt-6">
+                <button
+                  type="button"
+                  onClick={handleSaveMetadata}
+                  disabled={metadataLoading}
+                  className="w-full bg-[#101010] text-white py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#90784E] shadow-xl transition-all disabled:opacity-50"
+                >
+                  {metadataLoading ? 'SALVANDO...' : `CADASTRAR ${metadataType === 'brand' ? 'MARCA' : metadataType === 'type' ? 'TIPO' : 'PAÍS'}`}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsMetadataModalOpen(false)}
+                  className="text-stone-400 font-black text-[10px] uppercase tracking-widest hover:text-[#101010] transition-colors"
+                >
+                  CANCELAR
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

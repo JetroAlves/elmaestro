@@ -1,16 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { supabase } from '../services/supabase';
 
-const FILTERS = {
-  countries: ["Argentina", "Brasil", "Holanda", "Itália", "Uruguai"],
-  brands: ["Belprado", "Colonial", "El Maestro", "El Maestro Origens", "La Paulina", "Trentini"],
-  types: [
-    "Cabra", "Colonial", "Doce de Leite", "Gouda", "Grana Padano",
-    "Maasdam", "Manteiga", "Minas", "Montanhês", "Mozarela",
-    "Ovelha", "Parmesão", "Prato", "Proosdij", "Provolone",
-    "Queijo Azul", "Serrano"
-  ]
-};
+// FILTERS constant will be populated dynamically from database
 
 interface ProductsPageProps {
   onSelectProduct: (product: any) => void;
@@ -25,15 +16,40 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ onSelectProduct }) => {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
+  // Estados para filtros dinâmicos
+  const [dbFilters, setDbFilters] = useState({
+    countries: [] as string[],
+    brands: [] as string[],
+    types: [] as string[]
+  });
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      const { data, error } = await supabase.from('products').select('*');
-      if (data && !error) {
-        setProducts(data);
-      }
+    const fetchData = async () => {
+      setLoading(true);
+      const [pRes, cRes, bRes, tRes] = await Promise.all([
+        supabase.from('products').select('*'),
+        supabase.from('countries').select('name, flag_url').order('name'),
+        supabase.from('brands').select('name').order('name'),
+        supabase.from('product_types').select('name').order('name')
+      ]);
+
+      const countriesData = cRes.data || [];
+      const enrichedProducts = (pRes.data || []).map(p => ({
+        ...p,
+        flag_url: countriesData.find(c => c.name === p.country)?.flag_url
+      }));
+
+      setProducts(enrichedProducts);
+
+      setDbFilters({
+        countries: countriesData.map(c => c.name),
+        brands: bRes.data?.map(b => b.name) || [],
+        types: tRes.data?.map(t => t.name) || []
+      });
+
       setLoading(false);
     };
-    fetchProducts();
+    fetchData();
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -105,9 +121,9 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ onSelectProduct }) => {
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-32">
               <h3 className="text-[#101010] font-[900] text-xl uppercase tracking-tighter mb-8">Filtros</h3>
-              <FilterSection title="Países" items={FILTERS.countries} selected={selectedCountries} setSelected={setSelectedCountries} />
-              <FilterSection title="Marcas" items={FILTERS.brands} selected={selectedBrands} setSelected={setSelectedBrands} />
-              <FilterSection title="Tipos" items={FILTERS.types} selected={selectedTypes} setSelected={setSelectedTypes} />
+              <FilterSection title="Países" items={dbFilters.countries} selected={selectedCountries} setSelected={setSelectedCountries} />
+              <FilterSection title="Marcas" items={dbFilters.brands} selected={selectedBrands} setSelected={setSelectedBrands} />
+              <FilterSection title="Tipos" items={dbFilters.types} selected={selectedTypes} setSelected={setSelectedTypes} />
             </div>
           </aside>
 
@@ -201,9 +217,9 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ onSelectProduct }) => {
             </button>
           </div>
 
-          <FilterSection title="Países" items={FILTERS.countries} selected={selectedCountries} setSelected={setSelectedCountries} />
-          <FilterSection title="Marcas" items={FILTERS.brands} selected={selectedBrands} setSelected={setSelectedBrands} />
-          <FilterSection title="Tipos" items={FILTERS.types} selected={selectedTypes} setSelected={setSelectedTypes} />
+          <FilterSection title="Países" items={dbFilters.countries} selected={selectedCountries} setSelected={setSelectedCountries} />
+          <FilterSection title="Marcas" items={dbFilters.brands} selected={selectedBrands} setSelected={setSelectedBrands} />
+          <FilterSection title="Tipos" items={dbFilters.types} selected={selectedTypes} setSelected={setSelectedTypes} />
 
           <div className="sticky bottom-0 left-0 right-0 pt-8 pb-4 bg-gradient-to-t from-[#FCFAE6] via-[#FCFAE6] to-transparent">
             <button
