@@ -62,7 +62,7 @@ const FeaturedImageSection: React.FC = () => {
 
             {/* Sticker / Label (Floating Top Right) */}
             {banner?.sticker_url && (
-              <div className="absolute top-8 right-8 z-30 w-32 h-32 md:w-48 md:h-48 group-hover:scale-110 transition-transform duration-700">
+              <div className="absolute top-8 right-8 z-30 w-24 h-24 md:w-36 md:h-36 group-hover:scale-110 transition-transform duration-700">
                 <div className="w-full h-full rounded-full overflow-hidden border-4 border-white/20 shadow-2xl backdrop-blur-sm bg-white/10 flex items-center justify-center p-4">
                   <img
                     src={banner.sticker_url}
