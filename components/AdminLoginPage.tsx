@@ -40,7 +40,7 @@ const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLoginSuccess }) => {
                 <div className="relative z-10">
                     <div className="mb-10 text-center">
                         <img
-                            src="https://kyflpnhnxnivnuysrszr.supabase.co/storage/v1/object/public/images/204a94a1-f534-43b9-b67e-9a3a2c9b2baf/LogoElMaestro.png"
+                            src="https://mqcjdxflipzlwhfrfyky.supabase.co/storage/v1/object/public/images/logomarca/El-Maestro-Logo-Branca.png"
                             alt="Logo"
                             className="h-16 mx-auto mb-6"
                         />
