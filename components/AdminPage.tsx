@@ -97,6 +97,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
   const [flagPreview, setFlagPreview] = useState<string | null>(null);
   const [metadataLoading, setMetadataLoading] = useState(false);
   const [metadataSubTab, setMetadataSubTab] = useState<'brand' | 'country' | 'type'>('brand');
+  const [editingMetadataItem, setEditingMetadataItem] = useState<any | null>(null);
 
   useEffect(() => {
     if (activeTab === 'showcase' && showcase.length > 0) {
@@ -167,19 +168,28 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
       if (metadataType === 'type') tableName = 'product_types';
       if (metadataType === 'country') {
         tableName = 'countries';
-        data.flag_url = finalFlagUrl;
+        if (finalFlagUrl) {
+          data.flag_url = finalFlagUrl;
+        } else if (editingMetadataItem) {
+          // Mantém a bandeira anterior se não enviou uma nova
+          data.flag_url = editingMetadataItem.flag_url;
+        }
       }
 
-      const { error } = await supabase.from(tableName).insert(data);
+      const { error } = editingMetadataItem
+        ? await supabase.from(tableName).update(data).eq('id', editingMetadataItem.id)
+        : await supabase.from(tableName).insert(data);
+
       if (error) throw error;
 
-      alert(`${metadataType === 'brand' ? 'Marca' : metadataType === 'type' ? 'Tipo' : 'País'} adicionado com sucesso!`);
+      alert(`${metadataType === 'brand' ? 'Marca' : metadataType === 'type' ? 'Tipo' : 'País'} ${editingMetadataItem ? 'atualizado' : 'adicionado'} com sucesso!`);
 
       // Resetar estados
       setNewMetadataName('');
       setNewCountryFlag(null);
       setFlagPreview(null);
       setIsMetadataModalOpen(false);
+      setEditingMetadataItem(null);
 
       // Atualizar listas
       fetchAllData();
@@ -233,6 +243,18 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleEditMetadata = (item: any) => {
+    setMetadataType(metadataSubTab);
+    setNewMetadataName(item.name);
+    setEditingMetadataItem(item);
+    if (metadataSubTab === 'country' && item.flag_url) {
+      setFlagPreview(item.flag_url);
+    } else {
+      setFlagPreview(null);
+    }
+    setIsMetadataModalOpen(true);
   };
 
   const handleFlagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -666,7 +688,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                       <td className="px-10 py-6">
                         <p className="text-[#101010] font-black text-sm uppercase tracking-tighter">{item.name}</p>
                       </td>
-                      <td className="px-10 py-6 text-right">
+                      <td className="px-10 py-6 text-right space-x-4">
+                        <button onClick={() => handleEditMetadata(item)} className="text-[#90784E] text-[10px] font-black uppercase tracking-widest hover:underline">Editar</button>
                         <button onClick={() => deleteItem(item.id)} className="text-red-400 text-[10px] font-black uppercase tracking-widest hover:underline">Excluir</button>
                       </td>
                     </tr>
@@ -1043,13 +1066,23 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
       {/* MODAL METADADOS (Marcas, Tipos, Países) */}
       {isMetadataModalOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[#101010]/95 backdrop-blur-xl" onClick={() => setIsMetadataModalOpen(false)} />
+          <div className="absolute inset-0 bg-[#101010]/95 backdrop-blur-xl" onClick={() => {
+            setIsMetadataModalOpen(false);
+            setEditingMetadataItem(null);
+            setNewMetadataName('');
+            setNewCountryFlag(null);
+            setFlagPreview(null);
+          }} />
           <div className="relative w-full max-w-lg bg-[#FCFAE6] rounded-[3rem] shadow-2xl p-10 md:p-14 overflow-hidden border border-white/20">
             <h2 className="text-3xl font-black text-[#101010] uppercase tracking-tighter mb-10 flex items-center gap-4">
               <span className="bg-[#90784E] text-white p-3 rounded-2xl">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                {editingMetadataItem ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                )}
               </span>
-              Cadastrar {metadataType === 'brand' ? 'Marca' : metadataType === 'type' ? 'Tipo' : 'País'}
+              {editingMetadataItem ? 'Editar' : 'Cadastrar'} {metadataType === 'brand' ? 'Marca' : metadataType === 'type' ? 'Tipo' : 'País'}
             </h2>
 
             <div className="space-y-8">
@@ -1059,7 +1092,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                   type="text"
                   value={newMetadataName}
                   onChange={(e) => setNewMetadataName(e.target.value)}
-                  placeholder={`Digite o nome da ${metadataType === 'brand' ? 'marca' : metadataType === 'type' ? 'tipo' : 'país'}...`}
+                  placeholder={editingMetadataItem ? "Novo nome..." : `Digite o nome da ${metadataType === 'brand' ? 'marca' : metadataType === 'type' ? 'tipo' : 'país'}...`}
                   className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all"
                 />
               </div>
@@ -1095,11 +1128,17 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                   disabled={metadataLoading}
                   className="w-full bg-[#101010] text-white py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#90784E] shadow-xl transition-all disabled:opacity-50"
                 >
-                  {metadataLoading ? 'SALVANDO...' : `CADASTRAR ${metadataType === 'brand' ? 'MARCA' : metadataType === 'type' ? 'TIPO' : 'PAÍS'}`}
+                  {metadataLoading ? 'SALVANDO...' : `${editingMetadataItem ? 'ATUALIZAR' : 'CADASTRAR'} ${metadataType === 'brand' ? 'MARCA' : metadataType === 'type' ? 'TIPO' : 'PAÍS'}`}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsMetadataModalOpen(false)}
+                  onClick={() => {
+                    setIsMetadataModalOpen(false);
+                    setEditingMetadataItem(null);
+                    setNewMetadataName('');
+                    setNewCountryFlag(null);
+                    setFlagPreview(null);
+                  }}
                   className="text-stone-400 font-black text-[10px] uppercase tracking-widest hover:text-[#101010] transition-colors"
                 >
                   CANCELAR
