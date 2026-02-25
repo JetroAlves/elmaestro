@@ -64,11 +64,11 @@ const StoryDetailsPage: React.FC<StoryDetailsPageProps> = ({ story, onBack }) =>
                 </div>
 
                 {/* Imagem Central */}
-                <div className="relative rounded-[3rem] overflow-hidden mb-16 shadow-2xl aspect-[16/10]">
+                <div className="mb-16">
                     <img
                         src={story.image}
                         alt={story.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-auto rounded-[2rem] shadow-xl"
                     />
                 </div>
 
