@@ -89,7 +89,8 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores })
           banners.map((banner, index) => (
             <div
               key={banner.id}
-              className="absolute inset-0 transition-all duration-1000 ease-in-out"
+              onClick={handleCTA}
+              className="absolute inset-0 transition-all duration-1000 ease-in-out cursor-pointer"
               style={{
                 opacity: index === currentIndex ? 1 : 0,
                 transform: index === currentIndex ? 'scale(1)' : 'scale(1.05)',
@@ -136,18 +137,6 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores })
 
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/30 z-[2]"></div>
-
-        {/* CTA Button */}
-        {currentBanner?.button_text && (
-          <div className="relative z-10">
-            <button
-              onClick={handleCTA}
-              className="bg-white text-[#101010] px-12 py-5 rounded-full font-black text-sm uppercase tracking-[0.2em] hover:scale-105 transition-transform shadow-2xl"
-            >
-              {currentBanner.button_text}
-            </button>
-          </div>
-        )}
 
         {/* Dots — only if more than 1 banner */}
         {banners.length > 1 && (

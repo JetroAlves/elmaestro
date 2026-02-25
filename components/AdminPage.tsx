@@ -987,10 +987,12 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                       {BANNER_POSITIONS.map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
                     </select>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Texto do Botão (CTA)</label>
-                    <input type="text" value={formData.button_text || ''} onChange={(e) => setFormData({ ...formData, button_text: e.target.value })} placeholder="Ex: VER PRODUTOS" className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all" />
-                  </div>
+                  {activeTab !== 'banners' && (
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Texto do Botão (CTA)</label>
+                      <input type="text" value={formData.button_text || ''} onChange={(e) => setFormData({ ...formData, button_text: e.target.value })} placeholder="Ex: VER PRODUTOS" className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all" />
+                    </div>
+                  )}
                   <div className="space-y-2 md:col-span-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Link de Destino</label>
                     <input type="text" value={formData.link || ''} onChange={(e) => setFormData({ ...formData, link: e.target.value })} placeholder="Ex: /produtos ou link completo" className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all" />
