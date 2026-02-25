@@ -257,6 +257,29 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     setIsMetadataModalOpen(true);
   };
 
+  const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>, field: string) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+      e.preventDefault();
+      const textarea = e.currentTarget;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = formData[field] || '';
+
+      const before = text.substring(0, start);
+      const selectedText = text.substring(start, end);
+      const after = text.substring(end);
+
+      const newText = `${before}**${selectedText}**${after}`;
+      setFormData({ ...formData, [field]: newText });
+
+      // Tenta restaurar a seleção após o render (aproximado)
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + 2, end + 2);
+      }, 0);
+    }
+  };
+
   const handleFlagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -1007,9 +1030,16 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
                   <div className="space-y-2 md:col-span-2">
                     <div className="flex justify-between items-center">
                       <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Conteúdo Completo (Estilo Blog)</label>
-                      <span className="text-[8px] font-bold text-[#90784E] uppercase tracking-widest">Dica: Use **texto** para negrito</span>
+                      <span className="text-[8px] font-bold text-[#90784E] uppercase tracking-widest">Dica: Selecione o texto e use **Ctrl + B** para negrito</span>
                     </div>
-                    <textarea value={formData.content || ''} onChange={(e) => setFormData({ ...formData, content: e.target.value })} rows={8} placeholder="Escreva a história completa aqui..." className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all"></textarea>
+                    <textarea
+                      value={formData.content || ''}
+                      onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                      onKeyDown={(e) => handleTextareaKeyDown(e, 'content')}
+                      rows={8}
+                      placeholder="Escreva a história completa aqui..."
+                      className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 px-6 text-[#101010] font-bold focus:border-[#90784E] outline-none transition-all"
+                    ></textarea>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#101010]/60">Destaque Especial?</label>
