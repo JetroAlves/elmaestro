@@ -145,7 +145,7 @@ const StoreLocatorPage: React.FC = () => {
             </h2>
 
             {/* State filters — horizontal scroll */}
-            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+            <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-stone-200 scrollbar-track-transparent">
               <button
                 onClick={() => { setActiveState("Todos"); setVisibleCount(ITEMS_PER_PAGE); }}
                 className={`flex-shrink-0 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all
@@ -226,15 +226,15 @@ const StoreLocatorPage: React.FC = () => {
         </aside>
 
         {/* Lado Direito: Info Panel */}
-        <div className="flex-grow bg-stone-100 relative overflow-hidden h-[400px] lg:h-auto flex flex-col items-center justify-center">
+        <div className="flex-grow bg-stone-100 relative overflow-hidden h-[500px] lg:h-auto flex flex-col items-center justify-center">
           {/* Background Image */}
           <div className="absolute inset-0 grayscale opacity-30 mix-blend-multiply">
             <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=1600" className="w-full h-full object-cover" alt="Mapa Background" />
           </div>
 
           {/* Stats Overlay */}
-          <div className="relative z-10 text-center space-y-8 p-8">
-            <div className="bg-white/90 backdrop-blur-xl p-10 rounded-[2rem] shadow-2xl border border-white/50 max-w-md mx-auto">
+          <div className="relative z-10 text-center space-y-8 p-6 md:p-8">
+            <div className="bg-white/90 backdrop-blur-xl p-6 md:p-10 rounded-[2rem] shadow-2xl border border-white/50 max-w-md mx-auto">
               <div className="w-16 h-16 bg-[#101010] rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-[#90784E]">
                   <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 3.58-3.12c1.01-1.15 1.721-2.309 2.146-3.405C18.558 14.773 19 13.56 19 12.339V8.9a7.35 7.35 0 0 0-3.664-6.387 7.15 7.15 0 0 0-6.672 0A7.35 7.35 0 0 0 5 8.9v3.44c0 1.22.443 2.433 1.104 3.52 1.157 1.9 2.427 3.513 3.58 3.12ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
@@ -272,6 +272,19 @@ const StoreLocatorPage: React.FC = () => {
       </div>
 
       <style>{`
+        .scrollbar-thin::-webkit-scrollbar {
+          height: 6px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+          background: #e5e7eb;
+          border-radius: 10px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+          background: #90784E;
+        }
         .no-scrollbar::-webkit-scrollbar {
           display: none;
         }
