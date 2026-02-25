@@ -40,27 +40,32 @@ const StoreLocatorPage: React.FC = () => {
   const isSearchingByCep = /^\d+$/.test(searchTerm.replace(/[-.\s]/g, ''));
 
   const filteredStores = useMemo(() => {
-    const term = normalize(searchTerm.replace(/[-.\s]/g, ''));
+    const cleanSearch = searchTerm.trim();
 
-    return STORES.filter(store => {
-      // Filter by state first
-      if (activeState !== "Todos" && store.state !== activeState) return false;
+    // If no search term, handle state filtering only
+    if (!cleanSearch) {
+      return STORES.filter(store => activeState === "Todos" || store.state === activeState);
+    }
 
-      // If no search term, show all
-      if (!term) return true;
-
-      if (isSearchingByCep) {
-        // CEP prefix search
+    if (isSearchingByCep) {
+      const term = cleanSearch.replace(/\D/g, '');
+      return STORES.filter(store => {
+        if (activeState !== "Todos" && store.state !== activeState) return false;
         const cleanCep = store.cep.replace(/\D/g, '');
         return cleanCep.startsWith(term);
-      } else {
+      });
+    } else {
+      const term = normalize(cleanSearch);
+      return STORES.filter(store => {
+        if (activeState !== "Todos" && store.state !== activeState) return false;
+
         // Text search: name, city, neighborhood, address
         const searchable = normalize(
           `${store.name} ${store.city} ${store.neighborhood} ${store.address}`
         );
         return searchable.includes(term);
-      }
-    });
+      });
+    }
   }, [searchTerm, activeState, isSearchingByCep]);
 
   // Reset visible count when filters change
