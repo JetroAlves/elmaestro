@@ -39,7 +39,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigateAdmin, onNavigate }) => {
     <footer className="bg-[#101010] text-stone-400 py-16 px-4 border-t border-stone-800 relative">
       {/* Botão WhatsApp Flutuante */}
       <a
-        href="https://wa.me/5548988079607"
+        href="https://wa.me/5548991482480"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-8 right-8 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all group"
@@ -106,7 +106,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigateAdmin, onNavigate }) => {
               </div>
               <div>
                 <p className="text-[10px] uppercase font-black tracking-widest text-stone-600">Telefone</p>
-                <a href="tel:48988079607" className="text-stone-300 font-bold">(48) 988079607</a>
+                <a href="tel:48991482480" className="text-stone-300 font-bold">(48) 991482480</a>
               </div>
             </div>
             <div className="flex items-center gap-3">
