@@ -84,7 +84,7 @@ const App: React.FC = () => {
               onNavigateToProducts={() => setCurrentView('products')}
               onNavigateToStores={() => setCurrentView('stores')}
             />
-            <section className="py-32 px-4 bg-[#FCFAE6]">
+            <section className="py-12 md:py-32 px-4 bg-[#FCFAE6]">
               <div className="max-w-5xl mx-auto text-center">
                 <h2 className="text-3xl md:text-5xl font-extrabold text-[#101010] leading-tight tracking-tight text-balance">
                   Eternizando momentos
