@@ -65,7 +65,7 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores })
 
   const handleCTA = () => {
     if (!currentBanner) return;
-    const link = currentBanner.link || '/produtos';
+    const link = currentBanner.link?.trim() || '/produtos';
 
     if (link === '/produtos' && onNavigateToProducts) {
       onNavigateToProducts();
@@ -73,8 +73,8 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores })
       onNavigateToStores();
     } else if (link.startsWith('http')) {
       window.open(link, '_blank');
-    } else {
-      onNavigateToProducts?.();
+    } else if (onNavigateToProducts) {
+      onNavigateToProducts();
     }
   };
 
@@ -82,7 +82,7 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores })
 
   return (
     <section className="relative">
-      <div className="relative h-[90vh] flex items-center justify-center overflow-hidden">
+      <div className="relative h-auto aspect-[5/3] md:h-[90vh] md:aspect-auto flex items-center justify-center overflow-hidden">
 
         {/* Banner layers — all stacked, crossfade via opacity */}
         {banners.length > 0 ? (
@@ -135,8 +135,8 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProducts, onNavigateToStores })
           <div className="absolute inset-0 bg-[#101010] animate-pulse"></div>
         )}
 
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/30 z-[2]"></div>
+        {/* Dark overlay - Removed as per request */}
+        {/* <div className="absolute inset-0 bg-black/30 z-[2]"></div> */}
 
         {/* Dots — only if more than 1 banner */}
         {banners.length > 1 && (
