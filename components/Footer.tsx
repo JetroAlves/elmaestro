@@ -136,7 +136,17 @@ const Footer: React.FC<FooterProps> = ({ onNavigateAdmin, onNavigate }) => {
       </div>
 
       <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-stone-800 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-tighter">
-        <p>© 2026 EL MAESTRO. Todos os direitos reservados.</p>
+        <div className="flex flex-col md:flex-row items-center gap-1 md:gap-4">
+          <p>© 2026 EL MAESTRO. Todos os direitos reservados.</p>
+          <a
+            href="https://voxelo.com.br/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white transition-colors text-stone-600 font-bold"
+          >
+            Desenvolvido por Voxelo
+          </a>
+        </div>
         <div className="flex gap-6 items-center">
           <button onClick={(e) => handleNav(e, 'privacy')} className="hover:text-white transition-colors">Privacidade</button>
           <button onClick={(e) => handleNav(e, 'terms')} className="hover:text-white transition-colors">Termos de Uso</button>

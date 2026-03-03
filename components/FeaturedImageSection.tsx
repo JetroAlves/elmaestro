@@ -24,7 +24,7 @@ const FeaturedImageSection: React.FC = () => {
 
   const handleBannerClick = () => {
     if (!banner) return;
-    const link = banner.link || '/produtos';
+    const link = banner.link?.trim() || '/produtos';
     if (link.startsWith('http')) {
       window.open(link, '_blank');
     } else {
@@ -50,13 +50,13 @@ const FeaturedImageSection: React.FC = () => {
                 muted
                 loop
                 playsInline
-                className="w-full h-full object-cover brightness-[0.5] group-hover:scale-105 transition-transform duration-[2s]"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s]"
               />
             ) : (
               <img
                 src={banner?.image_desktop || fallbackUrl}
                 alt="Highlight"
-                className="w-full h-full object-cover brightness-[0.4] group-hover:scale-105 transition-transform duration-[2s]"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s]"
               />
             )}
 
@@ -73,8 +73,8 @@ const FeaturedImageSection: React.FC = () => {
               </div>
             )}
 
-            {/* Dark overlay for extra depth */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/20 via-transparent to-[#101010]/40"></div>
+            {/* Dark overlay removed as per request */}
+            {/* <div className="absolute inset-0 bg-gradient-to-b from-[#101010]/20 via-transparent to-[#101010]/40"></div> */}
           </div>
         </div>
       </div>
