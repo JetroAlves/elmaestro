@@ -48,6 +48,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
   const [dbTypes, setDbTypes] = useState<any[]>([]);
 
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchAllData();
@@ -540,12 +541,31 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
     { id: 'categories', label: 'Categorias', icon: Icons.Categories },
   ];
 
-  const currentList =
+  const rawList =
     activeTab === 'products' ? products :
       activeTab === 'recipes' ? recipes :
         activeTab === 'banners' ? banners :
           activeTab === 'promotions' ? promotions :
             stories;
+
+  const currentList = searchTerm.trim() === '' ? rawList : rawList.filter((item: any) => {
+    const term = searchTerm.toLowerCase();
+    const name = (item.name || '').toLowerCase();
+    const title = (item.title || '').toLowerCase();
+    if (activeTab === 'products') {
+      const brand = (item.brand || '').toLowerCase();
+      const country = (item.country || '').toLowerCase();
+      return name.includes(term) || brand.includes(term) || country.includes(term);
+    }
+    if (activeTab === 'recipes') {
+      const ocasion = (item.ocasion || '').toLowerCase();
+      return name.includes(term) || ocasion.includes(term);
+    }
+    if (activeTab === 'stories') {
+      return name.includes(term) || title.includes(term);
+    }
+    return name.includes(term) || title.includes(term);
+  });
 
   return (
     <div className="min-h-screen bg-[#FCFAE6] flex">
@@ -559,7 +579,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
           {menuItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id as AdminTab)}
+              onClick={() => { setActiveTab(item.id as AdminTab); setSearchTerm(''); }}
               className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === item.id ? 'bg-[#90784E] text-white shadow-lg' : 'text-stone-500 hover:text-stone-300 hover:bg-stone-900'}`}
             >
               <item.icon />
@@ -776,57 +796,86 @@ const AdminPage: React.FC<AdminPageProps> = ({ onExit }) => {
             </button>
           </div>
         ) : (
-          <div className="bg-white rounded-[3rem] shadow-xl overflow-hidden border border-stone-100">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="bg-stone-50 border-b border-stone-100">
-                  <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Preview</th>
-                  <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Título / Nome</th>
-                  {activeTab === 'products' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Origem / Marca</th>}
-                  {activeTab === 'recipes' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Ocasião / Tempo</th>}
+          <div>
+            {/* Barra de Busca para Produtos, Receitas e Stories */}
+            {(activeTab === 'products' || activeTab === 'recipes' || activeTab === 'stories') && (
+              <div className="mb-6 relative">
+                <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-stone-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder={`Buscar ${activeTab === 'products' ? 'produtos por nome, marca ou país...' : activeTab === 'recipes' ? 'receitas por nome ou ocasião...' : 'stories por nome ou título...'}`}
+                  className="w-full bg-white border-2 border-stone-100 rounded-2xl py-4 pl-14 pr-6 text-[#101010] font-bold text-sm focus:border-[#90784E] outline-none transition-all shadow-sm placeholder:text-stone-300 placeholder:font-medium"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="absolute inset-y-0 right-6 flex items-center text-stone-300 hover:text-stone-600 transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            )}
+            <div className="bg-white rounded-[3rem] shadow-xl overflow-hidden border border-stone-100">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-stone-50 border-b border-stone-100">
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Preview</th>
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Título / Nome</th>
+                    {activeTab === 'products' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Origem / Marca</th>}
+                    {activeTab === 'recipes' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Ocasião / Tempo</th>}
 
-                  {activeTab === 'banners' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Posição / Área</th>}
-                  {activeTab === 'promotions' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Label / Título</th>}
-                  {activeTab === 'stories' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Título / Especial</th>}
-                  <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400 text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-stone-50">
-                {currentList.length === 0 ? (
-                  <tr>
-                    <td colSpan={10} className="px-10 py-20 text-center text-stone-400 font-black uppercase text-xs tracking-widest italic">Nenhum item cadastrado</td>
+                    {activeTab === 'banners' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Posição / Área</th>}
+                    {activeTab === 'promotions' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Label / Título</th>}
+                    {activeTab === 'stories' && <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400">Título / Especial</th>}
+                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-stone-400 text-right">Ações</th>
                   </tr>
-                ) : currentList.map((item) => (
-                  <tr key={item.id} className="hover:bg-stone-50/50 transition-colors">
-                    <td className="px-10 py-6">
-                      <div className="w-14 h-14 bg-[#FCFAE6] rounded-xl overflow-hidden border border-stone-200 p-2 flex items-center justify-center">
-                        {item.image ? (
-                          <img src={item.image} className="w-full h-full object-contain rounded-lg" />
-                        ) : (
-                          <div className="text-stone-300 text-xs">IMG</div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-10 py-6">
-                      <p className="text-[#101010] font-black text-sm uppercase tracking-tighter">
-                        {item.name}
-                      </p>
-                      <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">ID: #{item.id}</p>
-                    </td>
-                    {activeTab === 'products' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.country} • {item.brand}</p></td>}
-                    {activeTab === 'recipes' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.ocasion} • {item.time}</p></td>}
+                </thead>
+                <tbody className="divide-y divide-stone-50">
+                  {currentList.length === 0 ? (
+                    <tr>
+                      <td colSpan={10} className="px-10 py-20 text-center text-stone-400 font-black uppercase text-xs tracking-widest italic">Nenhum item cadastrado</td>
+                    </tr>
+                  ) : currentList.map((item) => (
+                    <tr key={item.id} className="hover:bg-stone-50/50 transition-colors">
+                      <td className="px-10 py-6">
+                        <div className="w-14 h-14 bg-[#FCFAE6] rounded-xl overflow-hidden border border-stone-200 p-2 flex items-center justify-center">
+                          {item.image ? (
+                            <img src={item.image} className="w-full h-full object-contain rounded-lg" />
+                          ) : (
+                            <div className="text-stone-300 text-xs">IMG</div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-10 py-6">
+                        <p className="text-[#101010] font-black text-sm uppercase tracking-tighter">
+                          {item.name}
+                        </p>
+                        <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">ID: #{item.id}</p>
+                      </td>
+                      {activeTab === 'products' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.country} • {item.brand}</p></td>}
+                      {activeTab === 'recipes' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.ocasion} • {item.time}</p></td>}
 
-                    {activeTab === 'banners' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{(BANNER_POSITIONS.find(p => p.id === item.position)?.label) || 'Geral'}</p></td>}
-                    {activeTab === 'promotions' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.label} • {item.title}</p></td>}
-                    {activeTab === 'stories' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.title} • {item.is_special ? 'SIM' : 'NÃO'}</p></td>}
-                    <td className="px-10 py-6 text-right space-x-4">
-                      <button onClick={() => handleEdit(item)} className="text-[#90784E] text-[10px] font-black uppercase tracking-widest hover:underline">Editar</button>
-                      <button onClick={() => deleteItem(item.id)} className="text-red-400 text-[10px] font-black uppercase tracking-widest hover:underline">Excluir</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      {activeTab === 'banners' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{(BANNER_POSITIONS.find(p => p.id === item.position)?.label) || 'Geral'}</p></td>}
+                      {activeTab === 'promotions' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.label} • {item.title}</p></td>}
+                      {activeTab === 'stories' && <td className="px-10 py-6"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{item.title} • {item.is_special ? 'SIM' : 'NÃO'}</p></td>}
+                      <td className="px-10 py-6 text-right space-x-4">
+                        <button onClick={() => handleEdit(item)} className="text-[#90784E] text-[10px] font-black uppercase tracking-widest hover:underline">Editar</button>
+                        <button onClick={() => deleteItem(item.id)} className="text-red-400 text-[10px] font-black uppercase tracking-widest hover:underline">Excluir</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </main>
